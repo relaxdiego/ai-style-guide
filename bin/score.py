@@ -61,6 +61,10 @@ def score_file(path, tokens):
     tail_r = " ".join(words[int(n * (1 - TAIL_RESTATE)):])
     verdict_pct = first_token_pct(text, words, tokens)
 
+    blocks = [b for b in re.split(r"\n\s*\n", text.strip()) if b.strip()]
+    prose = sum(1 for b in blocks
+                if not re.match(r"^\s*([-*+]|\d+\.|\||#|```)", b))
+
     return {
         "file": path.name,
         "words": n,
@@ -70,20 +74,22 @@ def score_file(path, tokens):
         "restates_verdict": bool(tokens) and any(
             re.search(re.escape(t), tail_r, re.I) for t in tokens
         ),
+        "prose_paragraphs": prose,
+        "bullets": len(re.findall(r"^\s*[-*+] ", text, re.M)),
         "sections": len(re.findall(r"^(?:#{1,4} |\*\*[^*\n]+\*\*)", text, re.M)),
         "code_fence_lines": len(re.findall(r"^```", text, re.M)) // 2,
         "em_dashes_per_100w": round(100 * text.count("—") / max(n, 1), 2),
     }
 
 
-NUMERIC = ["words", "first_verdict_pct", "elaboration_ratio", "sections",
-           "code_fence_lines", "em_dashes_per_100w"]
+NUMERIC = ["words", "first_verdict_pct", "elaboration_ratio", "prose_paragraphs",
+           "bullets", "sections", "code_fence_lines", "em_dashes_per_100w"]
 BOOLEAN = ["trailing_question", "restates_verdict"]
 
 # Metrics a rule is expected to drive down. first_verdict_pct is deliberately
 # absent: landing the answer earlier is good, but so is a probe with no verdict.
-LOWER_IS_BETTER = {"words", "elaboration_ratio", "sections", "trailing_question",
-                   "restates_verdict"}
+LOWER_IS_BETTER = {"words", "elaboration_ratio", "prose_paragraphs", "sections",
+                   "trailing_question", "restates_verdict"}
 
 # A guard probe may drift this much before it counts as collateral damage.
 GUARD_TOLERANCE = 0.15
@@ -153,15 +159,6 @@ def main(dirs):
     print()
 
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    if not args:
-        sys.exit(__doc__)
-    if args[0] == "--check":
-        if len(args) != 2:
-            sys.exit("usage: score.py --check <rule.md>")
-        sys.exit(check_rule(args[1]))
-    main(args)
 
 
 # --- rule ownership checks -------------------------------------------------
@@ -248,3 +245,13 @@ def check_rule(rule_path):
         return 1
     print("PASS  rule moved what it owns and left its guards alone")
     return 0
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    if not args:
+        sys.exit(__doc__)
+    if args[0] == "--check":
+        if len(args) != 2:
+            sys.exit("usage: score.py --check <rule.md>")
+        sys.exit(check_rule(args[1]))
+    main(args)

@@ -40,11 +40,9 @@ mkdir -p "$RUN_DIR/.claude/output-styles"
 trap 'rm -rf "$RUN_DIR"' EXIT
 
 if [ -n "$RULE" ]; then
-  STYLE="rule-$(awk '/^id:/{print $2; exit}' "$ROOT/$RULE")"
-  # Our bookkeeping frontmatter is stripped; Claude Code gets only what its
-  # own output-style schema expects.
-  { printf -- '---\nname: %s\ndescription: style-guide rule %s\n---\n' "$STYLE" "$STYLE"
-    body "$ROOT/$RULE"; } > "$RUN_DIR/.claude/output-styles/$STYLE.md"
+  # Frontmatter passes through verbatim minus this repo's bookkeeping keys, so
+  # description, keep-coding-instructions and friends reach Claude Code intact.
+  STYLE="$("$ROOT/bin/mkstyle.py" "$ROOT/$RULE" "$RUN_DIR/.claude/output-styles")"
   printf '{"outputStyle":"%s"}\n' "$STYLE" > "$RUN_DIR/.claude/settings.json"
 else
   echo '{}' > "$RUN_DIR/.claude/settings.json"

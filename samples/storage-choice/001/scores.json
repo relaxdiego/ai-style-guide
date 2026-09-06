@@ -1,6 +1,6 @@
 {
   "probe": "storage-choice",
-  "condition": "control",
+  "condition": "001",
   "verdict_tokens": [
     "SQLite",
     "Postgres"
@@ -8,28 +8,28 @@
   "n": 10,
   "summary": {
     "words": {
-      "mean": 571,
-      "min": 496,
-      "max": 749
+      "mean": 333.3,
+      "min": 259,
+      "max": 382
     },
     "first_verdict_pct": {
-      "mean": 0.1,
+      "mean": 0.0,
       "min": 0.0,
-      "max": 0.2
+      "max": 0.0
     },
     "elaboration_ratio": {
-      "mean": 99.9,
-      "min": 99.8,
+      "mean": 100.0,
+      "min": 100.0,
       "max": 100.0
     },
     "prose_paragraphs": {
-      "mean": 6.5,
-      "min": 6,
-      "max": 8
+      "mean": 4.4,
+      "min": 3,
+      "max": 6
     },
     "bullets": {
-      "mean": 3.8,
-      "min": 3,
+      "mean": 2.5,
+      "min": 0,
       "max": 5
     },
     "sections": {
@@ -38,19 +38,19 @@
       "max": 0
     },
     "code_fence_lines": {
-      "mean": 0.1,
+      "mean": 0,
       "min": 0,
-      "max": 1
+      "max": 0
     },
     "em_dashes_per_100w": {
-      "mean": 0.0,
+      "mean": 0.3,
       "min": 0.0,
-      "max": 0.0
+      "max": 0.77
     },
     "trailing_question": {
-      "hits": 0,
+      "hits": 2,
       "of": 10,
-      "rate": 0.0
+      "rate": 0.2
     },
     "restates_verdict": {
       "hits": 9,
@@ -61,7 +61,7 @@
   "samples": [
     {
       "file": "r01.md",
-      "words": 549,
+      "words": 357,
       "first_verdict_pct": 0.0,
       "elaboration_ratio": 100.0,
       "trailing_question": false,
@@ -74,103 +74,103 @@
     },
     {
       "file": "r02.md",
-      "words": 520,
-      "first_verdict_pct": 0.2,
-      "elaboration_ratio": 99.8,
-      "trailing_question": false,
-      "restates_verdict": true,
-      "prose_paragraphs": 7,
-      "bullets": 4,
-      "sections": 0,
-      "code_fence_lines": 1,
-      "em_dashes_per_100w": 0.0
-    },
-    {
-      "file": "r03.md",
-      "words": 496,
+      "words": 317,
       "first_verdict_pct": 0.0,
       "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
-      "prose_paragraphs": 6,
-      "bullets": 5,
+      "prose_paragraphs": 5,
+      "bullets": 0,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.63
+    },
+    {
+      "file": "r03.md",
+      "words": 318,
+      "first_verdict_pct": 0.0,
+      "elaboration_ratio": 100.0,
+      "trailing_question": true,
+      "restates_verdict": false,
+      "prose_paragraphs": 4,
+      "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
       "em_dashes_per_100w": 0.0
     },
     {
       "file": "r04.md",
-      "words": 537,
+      "words": 382,
       "first_verdict_pct": 0.0,
       "elaboration_ratio": 100.0,
-      "trailing_question": false,
+      "trailing_question": true,
       "restates_verdict": true,
-      "prose_paragraphs": 7,
-      "bullets": 3,
+      "prose_paragraphs": 4,
+      "bullets": 0,
       "sections": 0,
       "code_fence_lines": 0,
       "em_dashes_per_100w": 0.0
     },
     {
       "file": "r05.md",
-      "words": 572,
+      "words": 259,
       "first_verdict_pct": 0.0,
       "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
-      "prose_paragraphs": 6,
-      "bullets": 3,
+      "prose_paragraphs": 4,
+      "bullets": 0,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.77
     },
     {
       "file": "r06.md",
-      "words": 622,
+      "words": 324,
       "first_verdict_pct": 0.0,
       "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
-      "prose_paragraphs": 7,
-      "bullets": 4,
+      "prose_paragraphs": 3,
+      "bullets": 5,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.62
     },
     {
       "file": "r07.md",
-      "words": 565,
-      "first_verdict_pct": 0.2,
-      "elaboration_ratio": 99.8,
+      "words": 334,
+      "first_verdict_pct": 0.0,
+      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
-      "prose_paragraphs": 6,
-      "bullets": 5,
+      "prose_paragraphs": 3,
+      "bullets": 0,
       "sections": 0,
       "code_fence_lines": 0,
       "em_dashes_per_100w": 0.0
     },
     {
       "file": "r08.md",
-      "words": 749,
+      "words": 348,
       "first_verdict_pct": 0.0,
       "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
-      "prose_paragraphs": 8,
-      "bullets": 3,
+      "prose_paragraphs": 5,
+      "bullets": 5,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.57
     },
     {
       "file": "r09.md",
-      "words": 533,
+      "words": 365,
       "first_verdict_pct": 0.0,
       "elaboration_ratio": 100.0,
       "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 6,
+      "restates_verdict": true,
+      "prose_paragraphs": 4,
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
@@ -178,16 +178,16 @@
     },
     {
       "file": "r10.md",
-      "words": 567,
-      "first_verdict_pct": 0.2,
-      "elaboration_ratio": 99.8,
+      "words": 329,
+      "first_verdict_pct": 0.0,
+      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 6,
       "bullets": 3,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.61
     }
   ]
 }

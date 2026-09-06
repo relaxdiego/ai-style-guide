@@ -1,0 +1,12 @@
+{
+  "probe": "storage-choice",
+  "condition": "001",
+  "rule": "style/rules/001-no-slop.md",
+  "delivery": "output-style",
+  "model": "opus",
+  "cli_version": "2.1.263",
+  "captured": "2026-09-06T15:12:35Z",
+  "reps": 10,
+  "flags": "--tools '' --strict-mcp-config --setting-sources project --no-session-persistence",
+  "cwd": "empty non-git tmpdir with synthesized .claude/"
+}

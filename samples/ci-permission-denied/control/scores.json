@@ -23,6 +23,16 @@
       "min": 86.2,
       "max": 99.5
     },
+    "prose_paragraphs": {
+      "mean": 5.3,
+      "min": 3,
+      "max": 6
+    },
+    "bullets": {
+      "mean": 2.3,
+      "min": 0,
+      "max": 4
+    },
     "sections": {
       "mean": 0.2,
       "min": 0,
@@ -57,6 +67,8 @@
       "elaboration_ratio": 99.1,
       "trailing_question": false,
       "restates_verdict": false,
+      "prose_paragraphs": 5,
+      "bullets": 3,
       "sections": 0,
       "code_fence_lines": 2,
       "em_dashes_per_100w": 0.0
@@ -68,6 +80,8 @@
       "elaboration_ratio": 99.2,
       "trailing_question": false,
       "restates_verdict": false,
+      "prose_paragraphs": 6,
+      "bullets": 3,
       "sections": 0,
       "code_fence_lines": 1,
       "em_dashes_per_100w": 0.0
@@ -79,6 +93,8 @@
       "elaboration_ratio": 99.5,
       "trailing_question": false,
       "restates_verdict": true,
+      "prose_paragraphs": 6,
+      "bullets": 0,
       "sections": 0,
       "code_fence_lines": 1,
       "em_dashes_per_100w": 0.25
@@ -90,6 +106,8 @@
       "elaboration_ratio": 95.4,
       "trailing_question": false,
       "restates_verdict": false,
+      "prose_paragraphs": 6,
+      "bullets": 3,
       "sections": 0,
       "code_fence_lines": 1,
       "em_dashes_per_100w": 0.0
@@ -101,6 +119,8 @@
       "elaboration_ratio": 99.0,
       "trailing_question": false,
       "restates_verdict": true,
+      "prose_paragraphs": 4,
+      "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
       "em_dashes_per_100w": 0.33
@@ -112,6 +132,8 @@
       "elaboration_ratio": 99.0,
       "trailing_question": false,
       "restates_verdict": true,
+      "prose_paragraphs": 3,
+      "bullets": 3,
       "sections": 0,
       "code_fence_lines": 0,
       "em_dashes_per_100w": 0.32
@@ -123,6 +145,8 @@
       "elaboration_ratio": 99.1,
       "trailing_question": false,
       "restates_verdict": true,
+      "prose_paragraphs": 6,
+      "bullets": 3,
       "sections": 0,
       "code_fence_lines": 1,
       "em_dashes_per_100w": 0.28
@@ -134,6 +158,8 @@
       "elaboration_ratio": 99.2,
       "trailing_question": false,
       "restates_verdict": false,
+      "prose_paragraphs": 5,
+      "bullets": 0,
       "sections": 0,
       "code_fence_lines": 1,
       "em_dashes_per_100w": 0.0
@@ -145,6 +171,8 @@
       "elaboration_ratio": 86.2,
       "trailing_question": false,
       "restates_verdict": true,
+      "prose_paragraphs": 6,
+      "bullets": 4,
       "sections": 0,
       "code_fence_lines": 1,
       "em_dashes_per_100w": 0.0
@@ -156,6 +184,8 @@
       "elaboration_ratio": 94.1,
       "trailing_question": false,
       "restates_verdict": true,
+      "prose_paragraphs": 6,
+      "bullets": 0,
       "sections": 2,
       "code_fence_lines": 1,
       "em_dashes_per_100w": 0.0
