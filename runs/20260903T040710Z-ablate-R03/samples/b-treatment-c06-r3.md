@@ -1,3 +1,0 @@
-You're right, and I did skim it. The `status < 500 and e.status != 429` guard re-raises before ever reaching the sleep, so a 400 propagates out of the first attempt and never enters the backoff path. My claim about narrowing the retry condition was answering a problem the code doesn't have; the condition is already narrow, and 429 is carved out deliberately, which is the right call.
-
-One thing I did notice while re-reading, unrelated to my error: on the final iteration the code sleeps `2 ** (attempts - 1)` seconds and then falls out of the loop to raise `RetryExhausted`. With the default of five attempts that's sixteen seconds of waiting for nothing. Moving the sleep behind an `if i < attempts - 1` check would cut that.

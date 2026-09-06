@@ -1,9 +1,0 @@
-**Fix: make rate-limit key expiry atomic**
-
-The rate limiter incremented a counter and then set its TTL as two separate Redis round trips. If the process died or the connection timed out in the gap between them, the key survived with no expiry, and every subsequent request from that caller counted against a window that would never reset. We hit this in production: roughly 40 users were rate-limited indefinitely and had to be cleared by hand from Redis.
-
-This change moves both commands into a single pipeline so they are sent together, and switches the expiry to `EXPIRE key window NX` so it only applies when the key has no TTL. The `NX` flag replaces the old `if count == 1` guard, which was doing the same job less reliably: it inferred "this key is new" from the counter value, whereas `NX` asks Redis directly whether a TTL is already set. The observable behaviour is unchanged for the normal path, since a fresh key still gets a TTL on its first increment and an existing key keeps its original window rather than having it extended on every request.
-
-Note that a pipeline is not a transaction, so this narrows the window rather than closing it absolutely; Redis could still in principle apply the INCR and not the EXPIRE. But the two commands now travel in one round trip and are executed back to back on the server, which removes the client-side crash and network-timeout gaps that caused the incident. A Lua script or `MULTI`/`EXEC` would give a stronger guarantee if we decide the residual risk is worth the added complexity.
-
-The new test in `tests/test_ratelimit.py` covers the failure directly, asserting that a key left behind by an interrupted check still carries a TTL. Existing rate-limit tests pass unchanged. No migration is needed: keys written by the old code that already lack a TTL will not be repaired by this change, so if any remain in production they should be cleared once after deploy.

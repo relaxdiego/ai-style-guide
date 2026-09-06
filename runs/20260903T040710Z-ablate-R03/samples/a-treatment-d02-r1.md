@@ -1,7 +1,0 @@
-**Fix rate limiter lockout when INCR and EXPIRE are not atomic**
-
-The rate limiter issued INCR and EXPIRE as two separate round trips to Redis, setting the TTL only when the counter came back as 1. If the process crashed or the connection timed out in the gap between those two calls, the key was left at 1 with no expiry, and since nothing would ever set a TTL on it afterwards the counter only grew. Every later request from that caller saw a count above the limit and was rejected, permanently. This is what caused last week's incident: roughly 40 users were locked out until their keys were deleted from Redis by hand.
-
-Both commands now go out in a single pipeline, so a crash mid-sequence either sends both or neither, and the key can no longer exist without a TTL. The EXPIRE uses `nx=True` rather than the old `count == 1` guard, which keeps the original behaviour of setting the window on first use without extending it on subsequent hits, and does so on Redis's side instead of depending on a value we read back between calls. Rate-limiting semantics are otherwise unchanged: same window, same limit, same return value.
-
-The new test covers the failure directly, asserting that the key carries a TTL after a `check` that is interrupted between the increment and the expiry. Worth noting for anyone deploying this: `EXPIRE ... NX` requires Redis 7.0 or later, and existing TTL-less keys left over from the incident are not repaired by this change, so any that remain need clearing separately.

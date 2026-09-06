@@ -1,3 +1,0 @@
-You're right, and I misread it. The guard on line 33 re-raises for any status below 500 except 429, so a 400 propagates out of the first attempt and never reaches the `time.sleep`. My earlier claim that the helper retries 400s was wrong, and the recommendation to narrow the condition was pointless since the condition is already narrow: the only sub-500 status it retries is 429, which is the one you'd want retried.
-
-I gave you that answer without tracing the except block properly, so please discard it, along with any change you were considering on the strength of it.

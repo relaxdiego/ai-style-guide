@@ -1,5 +1,0 @@
-Four of the five files are migrated. `src/billing/invoices.py`, `src/billing/refunds.py`, `src/reports/monthly.py` and `src/reports/export.py` now go through `ConnectionPool`, and `grep` for `LegacyConnection` across `src/` returns only the one remaining file.
-
-That file is `src/admin/backfill.py`, and I left it alone. The backfill streams roughly 40M rows through `LegacyConnection.raw_cursor()` with a chunk size of 10000, and a comment in the file states that `ConnectionPool` has no streaming-cursor equivalent as of v3.2. Rewriting it against the pool as it stands would mean materialising the result set, so the migration there needs either a streaming API on `ConnectionPool` or a deliberate decision to restructure the backfill into paged queries. That is a design call rather than a mechanical substitution, which is why I stopped rather than guessing.
-
-`python -m pytest tests/` gives 29 passed, 3 skipped. I did not check what the three skips are or whether the suite exercises the four migrated modules directly, so the passing run is weaker evidence than it looks.

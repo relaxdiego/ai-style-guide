@@ -1,9 +1,0 @@
-**Rate limiter: set the key's TTL in the same round trip as the increment**
-
-`RateLimiter.check` incremented the counter and set its expiry as two separate calls, with the `EXPIRE` guarded by `count == 1`. If the process died or the connection timed out in the gap between them, the key was left at 1 with no TTL, and because the guard only fires on the first increment, no later call would ever set one; the key stayed above the limit forever and the caller was locked out until someone deleted it by hand. This happened in production: roughly 40 users were rate-limited indefinitely and had to be cleared manually from Redis.
-
-The two commands now go out as a single pipeline. redis-py wraps pipelines in `MULTI`/`EXEC` by default, so the increment and the expiry either both apply or neither does, and there is no longer a window in which a key can exist without a TTL. The `EXPIRE` uses `nx=True` rather than the old `count == 1` check, which preserves the fixed-window semantics: the TTL is set when the key is created and left alone afterwards, so sustained traffic cannot keep pushing the expiry forward and turn the window into one that never closes. It also means that if a TTL-less key does turn up from some other source, the next request through the limiter repairs it instead of stepping over it.
-
-One deployment note: the `NX` option on `EXPIRE` requires Redis 7.0 or later. Against an older server the command fails rather than silently ignoring the flag, so this needs the Redis version confirmed before it ships.
-
-The test covers the case that caused the incident, asserting the key carries a TTL after `check` returns rather than only that the count is right, since the old code passed every count-based assertion while leaving the key immortal.

@@ -1,1 +1,0 @@
-You're right — I misread it. Line 33-34 raises immediately for any status below 500 except 429, so a 400 propagates on the first attempt and never reaches the `sleep`. My earlier claim was wrong, and the retry condition doesn't need narrowing.

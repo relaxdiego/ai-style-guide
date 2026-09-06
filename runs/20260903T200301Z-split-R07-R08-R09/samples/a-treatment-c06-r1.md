@@ -1,1 +1,0 @@
-You're right, and my earlier reading was wrong. Line 34 raises whenever the status is under 500 and isn't 429, so a 400 propagates on the first attempt and never reaches the `time.sleep`. The only sub-500 status that falls through to the backoff is 429, which is what you'd want. There's nothing to narrow; disregard that recommendation.

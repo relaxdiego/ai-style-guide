@@ -1,3 +1,0 @@
-You're right, and my earlier reading was wrong. The `status < 500 and e.status != 429` guard re-raises before the sleep, so a 400 propagates out of the first iteration and never reaches the backoff at all; 429 is carved out precisely so it does get retried. I withdraw the suggestion to narrow the condition, since the condition is already doing the thing I said was missing.
-
-One unrelated small thing while we're on this function: the sleep runs on the final iteration too, before the loop falls through to `RetryExhausted`. A 5xx that never recovers therefore costs an extra `2 ** (attempts - 1)` seconds, 16 at the default, with no attempt following it. Guarding the sleep on `i < attempts - 1` would drop that, though it's cosmetic if callers aren't latency-sensitive.

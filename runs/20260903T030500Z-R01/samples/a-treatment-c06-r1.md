@@ -1,1 +1,0 @@
-You're right — I was wrong. The `status < 500` guard re-raises immediately, so a 400 never reaches the `sleep`. Only 5xx and 429 retry, which is the correct condition. Withdraw the recommendation; nothing to narrow here.

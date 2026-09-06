@@ -1,9 +1,0 @@
-**Make rate-limit key expiry atomic with the increment**
-
-The rate limiter set a key's TTL in a second round trip: `INCR` first, then `EXPIRE` only when the returned count was 1. If the process died or the connection timed out in the gap between those two commands, the key survived with no expiry attached, and because the count never reset, the caller was rate-limited forever. Nothing in the normal request path would ever clear it. We hit this in production, where roughly 40 users were locked out indefinitely and had to be flushed from Redis by hand.
-
-This change moves both commands into a single pipeline so they reach Redis together, and switches to `EXPIRE ... NX`, which sets the TTL only when the key has none. The `NX` flag replaces the old `count == 1` guard: rather than inferring from the counter that we are the first caller in this window, we ask Redis directly whether a TTL is already present, so a key that somehow lost its expiry gets one back on the next request instead of staying stuck. Behaviour for well-formed windows is unchanged, since the first call in a window still sets the TTL and later calls still leave it alone; the window is not extended by subsequent increments.
-
-The pipeline narrows the failure window rather than closing it absolutely, since Redis pipelining is not a transaction and the commands are not guaranteed atomic against a mid-pipeline server failure. The `NX` recovery path is what covers the remainder: any key found without a TTL acquires one on the following check.
-
-A regression test covers the crash-between-`INCR`-and-`EXPIRE` case, asserting that the key still ends up with a TTL and the caller is not permanently locked out. No migration is needed, though any keys still stranded from the incident should be cleared manually, as existing keys with a TTL are unaffected and existing keys without one will be repaired on their next check.

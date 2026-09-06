@@ -1,1 +1,0 @@
-You're right, and I did skim it. The guard on line 34 raises for any status below 500 except 429, so a 400 propagates on the first attempt and never reaches the sleep. Only 5xx and 429 fall through to the backoff, which is the behaviour you'd want. Withdraw the recommendation to narrow the condition — there's nothing to narrow.

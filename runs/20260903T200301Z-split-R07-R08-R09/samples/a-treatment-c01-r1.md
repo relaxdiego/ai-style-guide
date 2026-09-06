@@ -1,7 +1,0 @@
-The session cache TTL now comes from config, which changes live behaviour: entries expire after 15 minutes instead of an hour.
-
-`src/cache/session.py:14` had `session_ttl = 3600` hardcoded while `src/config/defaults.py:31` declared `SESSION_TTL_SECONDS = 900`. The class attribute was the value actually used by the expiry check in `get()`, so the config constant was dead. I pointed the class attribute at the constant, which resolves the duplication in favour of the config value. That is a fourfold reduction in session lifetime, so if the 3600 was the intended production setting rather than a stale copy, the fix belongs in `defaults.py` instead and I'd rather you make that call than assume it.
-
-`tests/test_session_cache.py` asserted the literal `3600` and failed once the source changed. I rewrote the assertion to compare against `SESSION_TTL_SECONDS`, so it now checks that the cache honours config rather than pinning a number. The full file passes, eight tests.
-
-One thing I noticed and did not chase: in `get()`, around `src/cache/session.py:84`, the comparison `now - entry.created` uses a `now` that I never saw assigned in the lines I read. It may well be bound above line 80 or on the instance, and the tests pass, so it is likely fine, but I did not read enough of the file to confirm it.

@@ -1,5 +1,0 @@
-Migrated four of the five files off `LegacyConnection`: `src/billing/invoices.py`, `src/billing/refunds.py`, `src/reports/monthly.py`, and `src/reports/export.py` now use `ConnectionPool`. Tests pass (29 passed, 3 skipped).
-
-`src/admin/backfill.py` still uses `LegacyConnection` and I left it alone. It depends on `raw_cursor()` to stream 40M rows in chunks without materialising them, and per the note in the file, `ConnectionPool` has no streaming-cursor equivalent as of v3.2. Migrating it would mean either loading the full result set into memory or hand-rolling pagination over the query — both are real behaviour changes rather than a mechanical swap, so that's your call.
-
-Two options if you want it finished: paginate with keyset ranges over an indexed column, or check whether a newer `ConnectionPool` version added a streaming cursor. Tell me which and I'll do it.

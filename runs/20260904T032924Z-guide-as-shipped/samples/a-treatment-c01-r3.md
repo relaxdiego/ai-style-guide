@@ -1,5 +1,0 @@
-`booking_day` in `src/booking/confirm.py` was formatting the raw UTC datetime it got from the database, so any booking whose local date differs from its UTC date came out wrong. The failing test was an evening booking in Sydney: 2026-03-12 local, 2026-03-11 in UTC, and the confirmation text told the customer the wrong day.
-
-The fix makes `booking_day` take the venue timezone and convert before formatting, matching what `email.py:47` and `report.py:19` were already doing — `confirm.py` was the one path that skipped the `astimezone` call. Its only caller, `confirmation_text`, now passes `booking.venue.tz`. `tests/test_confirm.py` passes in full, 12 tests.
-
-One thing to know about the change: `booking_day` gained a required parameter. Grepping `src/` turned up no other callers, and the test suite is green, so nothing in the repository is left broken, but anything calling it from outside `src/` would need the same update.

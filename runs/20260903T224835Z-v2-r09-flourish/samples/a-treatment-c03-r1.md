@@ -1,7 +1,0 @@
-The rename is done everywhere except one line, and the full test suite is currently failing because of it.
-
-I replaced 23 occurrences across `src/accounts/models.py`, `src/accounts/forms.py`, `src/accounts/serializers.py`, `src/notify/sms.py`, `tests/test_accounts.py` and `tests/test_notify.py`. Those two test modules pass, 20 of 20.
-
-The one place I stopped short is `src/admin/export_csv.py:40`. I changed the attribute access in `row_for` to `user.phone`, since that reads the model field and would break otherwise, but I left the `HEADERS` list saying `"mobile"`. The comment directly above it says those column names are the file format the finance team imports, and that changing them changes the file other people's spreadsheets read. A database column rename doesn't imply that the exported file format changes with it, so that looked like your call rather than mine.
-
-The cost of leaving it is that `tests/test_export.py::test_csv_headers` now fails, asserting `'phone' in headers`. That test never contained the string `mobile`, so it must derive its expectation from the model or serializer rather than from a literal; I haven't opened it to confirm where the expectation comes from. So the fork is real in both directions: change the header to `"phone"` and the test goes green while the finance team's import sees a column name it doesn't recognise, or keep `"mobile"` and that test needs a change instead. The suite stands at 27 passing and that single failure.

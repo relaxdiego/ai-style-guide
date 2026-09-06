@@ -1,1 +1,0 @@
-You're right, and I did skim it. The guard raises on any status below 500 except 429, so a 400 leaves the loop on the first attempt without sleeping; only 5xx and 429 ever reach the backoff. The condition is already as narrow as what I was recommending you change it to, so there's nothing to do here.

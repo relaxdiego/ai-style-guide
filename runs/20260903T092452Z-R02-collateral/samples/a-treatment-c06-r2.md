@@ -1,1 +1,0 @@
-You're right, and my earlier reading was wrong. The `if e.status < 500 and e.status != 429` branch re-raises before reaching `time.sleep`, so a 400 exits on the first attempt and never enters the backoff at all. What the helper actually retries is 5xx plus 429, which is the set you'd want it to retry, so there's nothing to narrow. Disregard that recommendation.

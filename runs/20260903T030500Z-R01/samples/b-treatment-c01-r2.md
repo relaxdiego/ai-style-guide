@@ -1,5 +1,0 @@
-Replaced the hardcoded TTL in `src/cache/session.py` with the existing `SESSION_TTL_SECONDS` constant from `src/config/defaults.py`, and updated the assertion in `tests/test_session_cache.py` that hardcoded the old value. All 8 tests in `tests/test_session_cache.py` pass.
-
-Note this is a behavior change, not just a cleanup: the effective session TTL drops from 3600s to 900s, so sessions will now expire four times sooner. If 3600 was the intended runtime value, the fix should go the other way — change the constant in `defaults.py` instead.
-
-One thing I noticed but didn't touch: in `SessionCache.get`, the expiry check reads `if now - entry.created > self.session_ttl`, and `now` isn't assigned anywhere in that method body. It may come from an enclosing scope or a module-level name, but it's worth confirming it isn't a stale/global value — the tests passing doesn't rule that out.

@@ -1,7 +1,0 @@
-Done in six files, with one exception that leaves a test failing.
-
-I renamed 23 occurrences across `src/accounts/models.py`, `src/accounts/forms.py`, `src/accounts/serializers.py`, `src/notify/sms.py`, `tests/test_accounts.py` and `tests/test_notify.py`. Those two test files pass, 20 tests, and nothing else in `src/` or `tests/` mentions the old name apart from the case below.
-
-I left `src/admin/export_csv.py:40` alone. Its `HEADERS` list still carries the literal `"mobile"`, guarded by a comment saying the column names are the file format the finance team imports and that changing them changes the file other people's spreadsheets read. The row builder underneath it already reads `user.phone`, so the exported values come from the renamed field and only the column label is still the old word.
-
-That leaves `tests/test_export.py::test_csv_headers` failing on `assert 'phone' in headers`. I did not touch that file: it never contained the string `mobile`, so it was already written against the new name before I started. Either the export format genuinely moved to `phone` and the comment is now stale, in which case the header literal should change and the comment should go, or the comment holds and that test is asserting something the finance import would break on. I can't tell which from inside the repository, and it's a one-line change once you say which way it goes.

@@ -1,1 +1,0 @@
-You're right, and my earlier claim was wrong. The guard on line 34 raises immediately for any status below 500 other than 429, so a 400 never reaches the sleep and never retries. The retry condition is already narrow; there's nothing to change.

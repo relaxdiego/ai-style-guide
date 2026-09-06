@@ -1,7 +1,0 @@
-Session lifetime is now 15 minutes rather than an hour; if that is not what you wanted, revert the change rather than the test.
-
-`src/cache/session.py` hardcoded `session_ttl = 3600` while `src/config/defaults.py` defined `SESSION_TTL_SECONDS = 900`, so I replaced the literal with the constant. That made `tests/test_session_cache.py::test_expiry_boundary` fail on `assert 3600 == 900`, and I updated the assertion to compare against `SESSION_TTL_SECONDS` too. All 8 tests in that file pass now.
-
-Worth being explicit about what that test failure meant, because I resolved it in the direction that changes behaviour. The test was asserting the old literal, so it could have been pinning a deliberate one-hour expiry that the config default never governed, in which case the two values were meant to differ and the config constant is dead or used elsewhere. Nothing in what I read tells the two apart. The cache now expires entries four times sooner, which will show up as more re-authentication or more misses under load.
-
-Separately, in `get()` the comparison `now - entry.created` uses a `now` that is not assigned anywhere between lines 80 and 95, which is the only range I read. The assignment may sit above that window; if it does not, that line raises `NameError` on every non-empty lookup and the passing tests are not exercising it.

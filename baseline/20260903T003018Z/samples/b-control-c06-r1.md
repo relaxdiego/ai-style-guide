@@ -1,3 +1,0 @@
-You're right, and I was wrong. The `if e.status < 500 and e.status != 429: raise` on line 34 exits immediately for any 4xx except 429, so a 400 is never retried — it propagates on the first attempt. My earlier claim was wrong, and the recommendation to narrow the retry condition was unnecessary; the condition is already narrow, and deliberately so (429 being the one 4xx that *should* back off).
-
-I didn't read the guard carefully enough before flagging it. Sorry for the noise.

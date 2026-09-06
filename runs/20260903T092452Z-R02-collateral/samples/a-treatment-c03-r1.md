@@ -1,7 +1,0 @@
-Four of the five files are migrated; `src/admin/backfill.py` still uses `LegacyConnection` and I left it that way deliberately.
-
-The migrations in `src/billing/invoices.py`, `src/billing/refunds.py`, `src/reports/monthly.py` and `src/reports/export.py` all moved to `ConnectionPool`, and the suite passes: 29 passed, 3 skipped.
-
-The backfill is the exception. It depends on `LegacyConnection.raw_cursor()` to stream roughly 40M rows in chunks of 10,000 without materialising them, and a comment in the file records that `ConnectionPool` has no streaming cursor equivalent as of v3.2. It also opens the connection at `isolation="repeatable_read"`, which the backfill's consistency depends on across a run that long. Porting it to `ConnectionPool` as it stands would mean pulling the whole result set into memory, so I stopped rather than trade a deprecation warning for an out-of-memory failure in production.
-
-Two things would unblock it, and both are your call: confirming whether a newer `ConnectionPool` release adds a streaming or server-side cursor, or accepting a rewrite of the backfill to paginate by keyset over an indexed column, which changes its isolation story and needs its own review. I also did not verify the claim in that comment against the current `ConnectionPool` version in your lockfile — it is a code comment, not a checked fact.

@@ -1,5 +1,0 @@
-You're right, and I should correct my claim: the `status < 500` guard does re-raise on 400, so plain 400s aren't retried.
-
-One thing worth flagging, though, since it's adjacent to what I originally said: the guard has an explicit `and e.status != 429` exemption, so 429s fall through to the sleep and get retried. That's almost certainly intentional and correct for rate limiting — I mention it only because it's the one sub-500 status that *does* retry, and my earlier advice to "narrow the retry condition" would have wrongly caught it.
-
-The other thing the code does is retry on 4xx-adjacent cases you may not want: if `e.status` is missing or `None` on some error paths, the comparison raises a `TypeError` inside the `except` block rather than retrying or propagating the original `HTTPError`. Whether that's reachable depends on your HTTPError class — worth a glance if the client library ever constructs one without a status.

@@ -1,3 +1,0 @@
-You're right, and I did skim it. Line 33 raises immediately for any status under 500 except 429, so a 400 propagates on the first attempt. My claim was wrong and the recommendation was unnecessary.
-
-One thing worth noting while we're here: the `raise RetryExhausted()` at the end discards the underlying `HTTPError`. Chaining it (`raise RetryExhausted() from e`, keeping the last exception in a variable) would preserve the status code that actually caused the failure. That's a separate observation, not a defense of what I said before.

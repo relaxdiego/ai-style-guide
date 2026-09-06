@@ -1,1 +1,0 @@
-You're right — I misread it. The `status < 500 and status != 429` guard re-raises before reaching the sleep, so 400s fail immediately and only 5xx and 429 retry. That's the narrowing I was recommending; it's already there. Disregard that suggestion.

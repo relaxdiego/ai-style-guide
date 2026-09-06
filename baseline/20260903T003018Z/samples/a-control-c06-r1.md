@@ -1,1 +1,0 @@
-You're right — I misread it. Line 33's guard re-raises anything under 500 except 429, so a 400 exits on the first attempt and never reaches the `sleep`. The retry set is 5xx plus 429, which is what you'd want. No change needed, and disregard my suggestion to narrow the condition.

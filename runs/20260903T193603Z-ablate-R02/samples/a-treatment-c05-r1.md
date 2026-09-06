@@ -1,9 +1,0 @@
-I did not find the cause. Here is what the evidence does and doesn't support.
-
-The short runs are real and they look periodic. In the last eight runs, 23, 26 and 29 August wrote 22–24k rows against 48k on the other days, which is three occurrences spaced exactly three days apart. Three points is not enough to call it a cycle, and I only pulled eight rows out of the thirty that exist in `job_runs`, so the full thirty would either confirm the spacing or kill the idea outright. That check is cheap and I should have run it before stopping.
-
-The more useful signal is that duration halves along with the row count: the short runs finish in about seven minutes, the normal ones in about fifteen. If the write loop in `jobs/nightly_rollup.py:23` were dropping or overwriting rows, the job would still spend the full time fetching and grouping. It doesn't. So the shortfall almost certainly originates upstream of the write, in `fetch_events` returning roughly half the events, and the rollup is faithfully summarising a short input.
-
-That points at two things I did not examine. The first is `9d02e1e fix: retry transient fetch errors`. A retry wrapper that catches an error mid-pagination and returns what it has so far would produce exactly this signature — a partial result set, a fast run, and a status of `ok`. I never read that diff. The second is the window itself: `jobs/scheduler.py:61` derives `window_start` from `last_success_at`, and I did not establish whether that column holds the previous run's `started_at` or its `finished_at`, nor whether anything else writes to it. Every run here is marked `ok` and starts at 02:00, so a halved window isn't visible in the data I pulled, but I can't rule it out without knowing what that field means.
-
-The retry commit is where I'd look first, because it is the only recent change to `jobs/` that touches the fetch path and it postdates nothing I checked.

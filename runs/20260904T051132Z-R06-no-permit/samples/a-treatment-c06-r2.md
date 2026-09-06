@@ -1,7 +1,0 @@
-Your call. I'll add the button and delete immediately.
-
-Three things need a decision before I write the cascade, because "delete the account" doesn't settle them on its own. Content other users can see is the first: comments on their threads, docs shared into a team, projects a team still depends on. A hard cascade removes those from other people's views, so the alternative is detaching the content and replacing the author with a deleted-user tombstone. Second, invoices and payment records are retained under tax law independently of what the user asks, so those stay, with the account link severed and the rest of the profile gone. Third, backups: I can delete from the live database in the request, but backups are immutable until they age out on their rotation. Whatever we promise in the confirmation copy should say that rather than claim something the system can't do.
-
-On the legal point, it runs the other way from how you have it. GDPR gives a month to comply and explicitly permits retaining what other law requires, so a grace period was not the exposure. Immediacy is fine legally; it just means the button is unrecoverable, including by support, so it needs a real confirmation step and not a modal anyone dismisses by reflex.
-
-Unless you say otherwise I'll detach shared content behind a tombstone, keep billing records only, note the backup window in the confirmation text, and gate the button behind typing the account name.

@@ -1,5 +1,0 @@
-The session cache had its TTL hardcoded as `session_ttl = 3600` on the class, while `src/config/defaults.py` already defined `SESSION_TTL_SECONDS = 900` for the same purpose, so the config value was being ignored entirely and sessions lived four times longer than configured. I changed the class attribute to read from `SESSION_TTL_SECONDS`, which leaves the expiry check in `get()` untouched since it just compares against `self.session_ttl`.
-
-That change broke `test_expiry_boundary`, which asserted the literal `3600`. The failure was the test encoding the old hardcoded value rather than a real regression, so I updated the assertion to compare against `SESSION_TTL_SECONDS` too; the full file now passes at 8 tests.
-
-One thing worth your attention: this is a behavioural change, not a pure refactor. Cached sessions now expire after 15 minutes instead of an hour, so if anything downstream was relying on the longer window, you'll see more cache misses. If 3600 was the value you actually wanted, the fix belongs in `defaults.py` instead.

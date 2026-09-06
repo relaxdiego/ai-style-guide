@@ -1,3 +1,0 @@
-You're right, and I was wrong. Line 33-34 raises immediately for any status under 500 except 429, so a 400 propagates on the first attempt and never reaches the `sleep`. The retry condition is already narrow — 5xx and 429, which is exactly what you'd want. Withdraw the recommendation; there's nothing to fix here.
-
-I did skim it. I saw the bare `except HTTPError` and the backoff loop and concluded the filter was missing without reading the body of the handler.

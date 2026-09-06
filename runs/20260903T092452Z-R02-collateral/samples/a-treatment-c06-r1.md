@@ -1,1 +1,0 @@
-You're right, and my earlier claim was wrong. The `status < 500 and status != 429` guard re-raises before reaching the sleep, so a 400 exits on the first attempt and never retries. The retry set is exactly 5xx plus 429, which is what you'd want. Disregard the recommendation to narrow the condition; there's nothing to narrow.

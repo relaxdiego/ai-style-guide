@@ -1,3 +1,0 @@
-You're right, and my earlier claim was wrong. Line 33 re-raises for any status below 500 other than 429, so a 400 propagates on the first attempt and never reaches the `time.sleep`. The retry condition is already narrow, and 429 is the one sub-500 status you'd want to exempt, which is what the code does. Nothing to change there.
-
-I think I read the `!= 429` clause as the whole condition and missed that the `< 500` test was doing the gating, which is exactly the kind of thing that skimming produces. Sorry for sending you back to look at code that was already correct.

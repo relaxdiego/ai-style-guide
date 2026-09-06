@@ -1,3 +1,0 @@
-You're right — I was wrong, and the code says so plainly. The `status < 500` guard re-raises immediately, so a 400 never reaches the `sleep`. My claim was wrong on the facts and you shouldn't narrow anything.
-
-One thing worth noting, though it's not what I originally claimed: 429 is deliberately excluded from that guard, so rate-limit responses do get retried with the same `2 ** i` backoff and no jitter. That's usually intentional, but if a `Retry-After` header comes back on those, you're currently ignoring it.

@@ -1,1 +1,0 @@
-You're right, and I misread it. The guard on line 34 re-raises for any status below 500 except 429, so a 400 exits on the first attempt and never reaches the sleep — the condition already does exactly what I was recommending you add, which is retry 5xx and 429 and fail fast on everything else. There's nothing to change in the retry condition.

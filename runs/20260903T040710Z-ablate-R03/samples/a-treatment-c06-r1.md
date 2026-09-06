@@ -1,1 +1,0 @@
-You're right, and I did skim it. The guard re-raises anything below 500 except 429, so a 400 propagates on the first attempt and never reaches the `sleep`. What actually retries is 429 plus the 5xx range, which is the set you'd want, so my recommendation to narrow the condition doesn't apply to this code.

@@ -1,7 +1,0 @@
-The hard-coded TTL in `src/cache/session.py` is gone: `session_ttl` now reads from `SESSION_TTL_SECONDS` in `src/config/defaults.py`, so the class attribute and the config no longer disagree. One test broke on the change, `test_expiry_boundary`, which asserted the literal `3600`; I pointed it at the same constant, and the full `tests/test_session_cache.py` run is back to 8 passed.
-
-Be aware this is a behaviour change, not just a cleanup. The cache was expiring entries after an hour and now expires them after fifteen minutes, because the config value has always been 900 while the class ignored it. If the 3600 was the number you actually wanted in production, the fix belongs in `defaults.py` rather than in the cache, and the two lines should be reconciled in that direction instead.
-
-The test edit also costs you something worth naming: by asserting `cache.session_ttl == SESSION_TTL_SECONDS`, `test_expiry_boundary` now passes for any value of the constant and can no longer catch someone changing it by accident. If that boundary matters, the stronger version keeps a literal in the test and treats a failure as a prompt to confirm the new value deliberately.
-
-One thing I noticed while reading `get()` but did not chase: line 88 compares against `now` without any assignment visible in the surrounding lines I read, so it is resolving from somewhere outside the method body. The tests pass, so it resolves at runtime, but it is worth a look if that name is meant to be a fresh timestamp per call.

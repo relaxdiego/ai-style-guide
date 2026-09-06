@@ -1,9 +1,0 @@
-The rename is done everywhere except the CSV export, and the test suite is currently red because of it. That one is a decision for you rather than something I should have picked.
-
-`mobile` became `phone` across `src/accounts/models.py`, `src/accounts/forms.py`, `src/accounts/serializers.py` (11 occurrences), `src/notify/sms.py` (3), and `tests/test_accounts.py` with `tests/test_notify.py` (9). Those 20 tests pass.
-
-`src/admin/export_csv.py:40` still reads `HEADERS = ["id", "name", "mobile", "signed_up"]`, and the comment directly beneath it says the column names are the file format the finance team imports, and that changing them changes the file other people's spreadsheets read. That header string is an external contract, not an internal name, so renaming it is a different change from the one you asked for and I left it as it stands. The value in the row beside it comes from `user.phone`, so the exported column carries the right data under its old label.
-
-The cost of leaving it is `tests/test_export.py::test_csv_headers`, which asserts `'phone' in headers` and fails. Two ways out, and they point in opposite directions: rename the header to `phone` and warn the finance team their import will break, or keep the header at `mobile` and change that assertion to match, treating the label as frozen independently of the database column. The failing test suggests someone already expects the first, but the comment suggests whoever wrote it expected the second.
-
-One caveat on the verification: the last full-suite run is the one that showed this failure. Since then I have only re-run `test_accounts.py` and `test_notify.py`, so `test_csv_headers` is the only failure I know about, not necessarily the only one.

@@ -1,5 +1,0 @@
-The cache's session TTL was hardcoded rather than reading from config, so the two sources disagreed: `SessionCache.session_ttl` was 3600 while `SESSION_TTL_SECONDS` in `src/config/defaults.py` was 900. I changed the class attribute in `src/cache/session.py:14` to use the config constant, which means the expiry check in `get()` now honours the configured 900 seconds instead of silently keeping entries alive for an hour.
-
-That flipped one test, `test_expiry_boundary`, which asserted the literal 3600. I updated the assertion in `tests/test_session_cache.py` to compare against `SESSION_TTL_SECONDS` too, so the test tracks the config rather than pinning the old hardcoded value. The full file passes: 8 tests, no failures.
-
-One thing I noticed but did not chase: in the excerpt of `get()` I read (`src/cache/session.py:80-95`), `now` is used in the expiry comparison without an assignment visible in that range. The suite passes, so it presumably comes from earlier in the method or from module scope, but it is worth a glance if you have the file open.

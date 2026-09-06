@@ -1,1 +1,0 @@
-You're right, and my earlier claim was wrong. The guard raises on any status below 500 except 429, so a 400 propagates on the first attempt and never reaches the sleep. Retries are limited to 5xx and 429, which is the condition I was telling you to write. Disregard the recommendation to narrow it.

@@ -1,5 +1,0 @@
-Four of the five call sites are migrated to `ConnectionPool`: `src/billing/invoices.py`, `src/billing/refunds.py`, `src/reports/monthly.py`, and `src/reports/export.py`. The suite passes, 29 tests with 3 skipped.
-
-The fifth, `src/admin/backfill.py`, I left on `LegacyConnection`. It uses `raw_cursor()` to stream 40M rows in chunks without materialising them, and per the note in the file, `ConnectionPool` as of v3.2 has no streaming cursor equivalent. Migrating it would mean either buffering the whole result set or writing a pagination scheme against the underlying driver, and both are a different piece of work from swapping a connection class. So the deprecation is not yet fully retired: one import remains, and a grep for `LegacyConnection` still returns that file.
-
-The tests I ran are the existing suite; none of them appear to exercise the backfill path, so the four migrations are covered only to the extent the suite already covered those modules.

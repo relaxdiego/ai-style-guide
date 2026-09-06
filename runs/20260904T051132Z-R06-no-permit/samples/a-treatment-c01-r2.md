@@ -1,5 +1,0 @@
-`booking_day` in `src/booking/confirm.py` was formatting the raw UTC timestamp, so a booking late in the evening in a venue's local time reported the previous calendar day. The failing test was `test_evening_booking_in_sydney`, where an 11 March UTC timestamp should have read as 12 March in Sydney.
-
-I gave `booking_day` a `tz` parameter and had it convert before formatting, then updated `confirmation_text` to pass `booking.venue.tz`. That matches what `email.py:47` and `report.py:19` were already doing — both convert to the venue timezone before taking the date, so `confirm.py` was the odd one out rather than the model the others followed.
-
-The full `tests/test_confirm.py` suite passes, 12 tests. A grep across `src/` shows `booking_day` has no other callers, so the signature change breaks nothing else in the tree; I did not check whether anything outside `src/` imports it.

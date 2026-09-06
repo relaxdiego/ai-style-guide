@@ -1,3 +1,0 @@
-You're right, and I was wrong. Line 34 re-raises immediately for any status below 500 other than 429, so a 400 propagates on the first attempt and never reaches the `time.sleep`. The only statuses that loop are 429 and 5xx, which is exactly the behavior you'd want; my recommendation to narrow the condition was advice to fix something that wasn't broken. I described the shape of the function I expected rather than the one you wrote, which is a fair description of skimming.
-
-If there's another part of this file you want checked, I'll read it properly this time and quote the lines I'm reasoning from so you can catch me faster if I drift again.

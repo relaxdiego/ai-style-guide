@@ -1,7 +1,0 @@
-The rename is complete except for one CSV header, and the full test suite is currently red because of it.
-
-I renamed the field in `src/accounts/models.py`, `src/accounts/forms.py`, `src/accounts/serializers.py`, `src/notify/sms.py`, `tests/test_accounts.py` and `tests/test_notify.py` — 23 occurrences in all. Those two test files pass, 20 tests.
-
-I made no changes to `src/admin/export_csv.py`. Its `HEADERS` list still reads `["id", "name", "mobile", "signed_up"]`, and the comment above `row_for` says those column names are the file format the finance team imports and that changing them changes the file other people's spreadsheets read (`src/admin/export_csv.py:43`). That string isn't a reference to the database column; it's the name of a field in an outward-facing file, so I didn't want to rename it as a side effect of a schema change. Note that the row builder already reads `user.phone`, so the header is now the only `mobile` left in that file: the export writes the phone value under a column labelled `mobile`.
-
-That leaves `tests/test_export.py::test_csv_headers` failing, since it asserts `'phone' in headers`. The tree stays red until the question the comment raises gets answered one way or the other: either the header becomes `phone` and whoever imports that file is told, or the header stays `mobile` as a deliberate external contract and the test is changed to assert that. I can't tell from the repository whether the finance team has been warned, and that's the fact the choice turns on.

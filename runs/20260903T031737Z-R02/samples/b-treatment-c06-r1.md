@@ -1,3 +1,0 @@
-You're right, and I was wrong. Line 33 re-raises on any status below 500 except 429, so a 400 propagates out of the `except` block on the first attempt and never reaches the `time.sleep`. My earlier claim would only hold if that guard were absent or inverted, and I evidently read the loop structure without tracing the exception path through it — a skim, as you say.
-
-For what it's worth, the condition as written is already the narrowing I was recommending: 5xx retries, 429 retries as a deliberate exception since rate limits are transient, and everything else in the 4xx range fails fast. There's nothing to change here.

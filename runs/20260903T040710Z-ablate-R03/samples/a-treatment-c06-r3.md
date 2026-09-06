@@ -1,1 +1,0 @@
-You're right, and my earlier reading was wrong. Line 34's `if e.status < 500 and e.status != 429: raise` re-raises a 400 on the first attempt, so it never reaches the sleep, and the only sub-500 status that survives to be retried is 429. The narrowing I recommended is already there, and there's nothing to change.

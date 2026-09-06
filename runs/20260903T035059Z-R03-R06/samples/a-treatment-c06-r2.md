@@ -1,1 +1,0 @@
-You're right, and my earlier claim was wrong. The guard on line 34 raises immediately for any status below 500 other than 429, so a 400 propagates on the first attempt and never reaches the sleep. The retry set is exactly 5xx plus 429, which is what you'd want, so there's nothing to narrow and you can disregard the recommendation.

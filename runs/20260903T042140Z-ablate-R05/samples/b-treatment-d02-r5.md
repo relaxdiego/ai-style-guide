@@ -1,9 +1,0 @@
-**Fix: make rate-limit key expiry atomic**
-
-The rate limiter set a key's TTL in a separate round trip from the increment that created it, so any interruption between the two left a counter that never expired. In practice that meant a permanent lockout: the key stayed above the limit forever, and the only remedy was deleting it by hand. We hit this in production, where roughly 40 users were rate-limited indefinitely and had to be cleared out of Redis manually after the fact.
-
-The fix pipelines `INCR` and `EXPIRE` into a single execution, so the counter and its TTL are established together rather than in two separately-failable steps. The `EXPIRE` now carries `nx=True`, which keeps the semantics of the original code: the TTL is set only when it is absent, so an ongoing window is not extended by each new request within it. Behaviour under normal operation is unchanged, and the return value still compares the post-increment count against the configured limit.
-
-A regression test covers the case that caused the incident, asserting that a key created by `check` always carries a TTL rather than relying on a second call that may never arrive.
-
-Worth noting for review: this narrows the window rather than closing it absolutely, since a pipeline is not a transaction and Redis could in principle apply the first command and not the second. If we want a hard guarantee, the next step is a Lua script or `MULTI`/`EXEC`, which I'm happy to do in a follow-up if reviewers prefer it here. Existing keys stranded without a TTL by the old code are not repaired by this change; they were cleared during incident response, but a sweep is worth considering if any were missed.

@@ -1,1 +1,0 @@
-You're right, and my earlier reading was wrong. The guard on line 34 raises immediately for any status below 500 except 429, so a 400 propagates out of the loop on the first attempt and never reaches the `time.sleep`. The retry set is already exactly 5xx plus 429, which is the narrowing I was recommending; there's nothing to change.

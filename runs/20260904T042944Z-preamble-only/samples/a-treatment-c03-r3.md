@@ -1,7 +1,0 @@
-The rename is done in the application code and tests, but I left one occurrence in place, and that leaves the full suite with one failing test that needs your decision.
-
-I renamed 23 occurrences across five files: `src/accounts/models.py`, `src/accounts/forms.py`, `src/accounts/serializers.py` (11), `src/notify/sms.py` (3), and `tests/test_accounts.py` plus `tests/test_notify.py` (9). Those two test files pass, 20 tests.
-
-The one I did not touch is the CSV header in `src/admin/export_csv.py:40`, where `HEADERS` still lists `"mobile"`. The comment directly above `row_for` says these column names are the file format the finance team imports and that changing them changes the file other people's spreadsheets read. The row body itself reads `user.phone`, so the code follows the renamed field; it is only the header string that still says `mobile`. Renaming a database column doesn't imply changing an export format that people outside the repository consume, so I stopped rather than decide that for you.
-
-The consequence is that `tests/test_export.py::test_csv_headers` fails on `assert 'phone' in headers`, and it is the only failure in the full run. That test expects the exported column name to track the field name, so the two positions are in direct conflict and someone has to pick one: either the export header becomes `phone` and the finance team is told their import will need updating, or the header stays `mobile` and the test is corrected to expect it.

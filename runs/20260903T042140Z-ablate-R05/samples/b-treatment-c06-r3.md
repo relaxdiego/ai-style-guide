@@ -1,3 +1,0 @@
-You're right, and my recommendation was based on a misreading. The condition on line 33 raises immediately for any status below 500 except 429, so a 400 propagates out of the loop on the first attempt and never reaches the `time.sleep`. The only things that retry are 5xx and 429, which is what you'd want. Withdraw the suggestion to narrow the condition; there's nothing to narrow.
-
-I don't have a good account of how I got it wrong beyond not reading the condition carefully before commenting on it. Sorry for the noise. If you want me to take another pass at the helper I'll actually work through the branches this time, but as far as the retry predicate goes it looks correct as written.

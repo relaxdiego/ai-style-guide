@@ -1,9 +1,0 @@
-**Report skipped rows instead of silently truncating the contact import**
-
-Support saw three reports this month of imports that reported success but created fewer contacts than the file held. In each case the sheet had a blank row partway down, and `read_rows` treated an empty first cell as end-of-data and stopped there. Everything below the gap was dropped without a word. Separately, one unreadable date anywhere in the file aborted the whole import and showed the customer a stack trace, losing the rows that had parsed fine.
-
-`read_rows` now skips a row only when every cell is blank, and continues past it rather than breaking out of the loop, so a gap in the middle of a sheet costs nothing. It also yields the sheet line number alongside the row, since the import needs it to tell the customer where a problem was. `import_file` wraps each `Contact.objects.create` in a try, collects `ValueError` from `parse` as `(line_no, message)`, and returns an `ImportResult` carrying the created count and the error list. One bad date now costs one row. The upload view unpacks that result and passes both fields to the template, so the results page lists what was skipped and why instead of reporting a bare count.
-
-Two things for reviewers to check. The `read_rows` signature changed from yielding a row to yielding a `(line_no, row)` pair, so any caller outside these two files needs updating. And only `ValueError` is caught: a `parse` failure that raises something else still aborts the import, which is the intended behaviour for genuine bugs but means the error path depends on `parse` being disciplined about what it raises.
-
-Tests cover both reports: a fixture with a blank row at row 20 yields all 40 data rows, and a fixture with one malformed date imports 39 contacts and reports `(13, "could not read date '31/02/2026'")`.

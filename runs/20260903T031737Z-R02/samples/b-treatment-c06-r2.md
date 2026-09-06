@@ -1,3 +1,0 @@
-You're right, and I did skim it. The guard on line 34 raises immediately for any status below 500 other than 429, so a 400 never reaches the `time.sleep` — it propagates out of the loop on the first attempt. My earlier claim was wrong, and the recommendation to narrow the retry condition was pointless since the condition is already narrow: 5xx and 429 retry, everything else fails fast, which is the behavior you'd want.
-
-One unrelated thing I noticed while re-reading, take it or leave it: on the final iteration the helper still sleeps `2 ** (attempts - 1)` seconds before falling out of the loop and raising `RetryExhausted`, so with the default of 5 attempts you eat an extra 16-second wait that buys nothing. Skipping the sleep when `i == attempts - 1` would cut that.

@@ -1,1 +1,0 @@
-You're right; I misread it. The `e.status < 500 and e.status != 429` guard re-raises before control ever reaches `time.sleep`, so a 400 propagates out on the first attempt and only 5xx and 429 reach the backoff at all. The condition is already the narrowing I recommended, so there's nothing to change in the helper.

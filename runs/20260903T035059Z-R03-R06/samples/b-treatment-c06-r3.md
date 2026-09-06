@@ -1,3 +1,0 @@
-You're right, and I did skim it. The guard on line 34 re-raises for any status below 500 other than 429, so a 400 propagates out on the first attempt and never reaches the sleep. My claim that the helper retries 400s was simply wrong, and the recommendation followed from that error: the condition is already narrow, retrying only on 5xx and 429, which is the set you'd want it to cover.
-
-What I think happened is that I read the loop and the `2 ** i` backoff, recognised the general shape, and described what that shape usually gets wrong instead of tracing the exception path through the guard. Nothing in lines 28 to 40 needs changing on account of what I said.

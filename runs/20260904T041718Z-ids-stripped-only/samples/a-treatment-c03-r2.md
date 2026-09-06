@@ -1,9 +1,0 @@
-The rename is in place across the six files that used the field, but the suite is red on one file I deliberately stopped short of.
-
-I replaced 23 occurrences in `src/accounts/models.py`, `src/accounts/forms.py`, `src/accounts/serializers.py`, `src/notify/sms.py`, `tests/test_accounts.py` and `tests/test_notify.py`. Running those two test files on their own gives 20 passed, so the model, form, serializer and SMS paths are consistent with the renamed column.
-
-`src/admin/export_csv.py` is the exception, and it is currently half-renamed: `row_for` reads `user.phone`, matching the model, while `HEADERS` still lists `"mobile"` as the third column. The comment sitting directly above `row_for` says those strings are the file format the finance team imports, and that changing them changes the file other people's spreadsheets read. Editing a string that other people's tooling parses is a different kind of change from renaming a field, so I did not make it on my own judgement.
-
-That mismatch is the failure: `tests/test_export.py::test_csv_headers` asserts `'phone' in headers`. That test never contained the word "mobile", so it never appeared in my initial grep, and its expectation is that the header follows the field rename. The repo's own test therefore disagrees with the comment in the source, and resolving it is a question about the downstream consumer rather than about the code. If the finance team's import was updated when the database column was, the header string should become `"phone"` and the test goes green; if it was not, the header must stay `"mobile"` and the test is the thing that needs correcting.
-
-As it stands, the full suite has that one failure and everything else passes.

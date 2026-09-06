@@ -1,5 +1,0 @@
-`booking_day` was formatting a UTC datetime without converting it, so a booking late in the evening in a venue's local timezone printed the previous day's date. The Sydney test case was the visible symptom: an 11 March evening booking stored as UTC came out as `2026-03-11` when the venue's own calendar says `2026-03-12`.
-
-The fix follows what `email.py` and `report.py` already do — convert to the venue's timezone before formatting. `booking_day` now takes the timezone as a second argument and calls `astimezone(tz)` before `strftime`, and `confirmation_text` passes `booking.venue.tz`. The stale comment about `when` arriving in UTC no longer describes a hazard, since conversion is now the function's job.
-
-The full `tests/test_confirm.py` suite passes, 12 tests. `booking_day` had only the one caller in `src/`, so the signature change is fully accounted for; I did not grep `tests/` for other callers, so if a test elsewhere calls `booking_day` directly it would still be passing one argument.

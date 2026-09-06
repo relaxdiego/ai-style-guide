@@ -1,3 +1,0 @@
-You're right, and I did skim it. The `if e.status < 500 and e.status != 429: raise` on line 34 re-raises immediately for a 400, so it never reaches the `time.sleep` and never loops again. My claim was wrong, and the recommendation to narrow the condition was pointless work off the back of it: the condition is already narrow, and 429 is the deliberate exception that belongs there.
-
-What I suspect happened is that I read the shape of the function, saw a bare `except HTTPError` wrapping a sleep-and-retry loop, and reported the failure mode that pattern usually has, without reading the guard that makes this instance not have it.

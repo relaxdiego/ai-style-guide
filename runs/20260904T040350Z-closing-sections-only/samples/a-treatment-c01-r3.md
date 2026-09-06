@@ -1,5 +1,0 @@
-`booking_day` in `src/booking/confirm.py` formatted the stored datetime directly, and since bookings come out of the database in UTC, any evening booking in a timezone ahead of UTC printed the day before. That was what `test_evening_booking_in_sydney` was catching: it expected `2026-03-12` and got `2026-03-11`. The fix is the conversion the other two formatting sites were already doing, so `booking_day` now takes a `tz` argument and calls `astimezone(tz)` before formatting, and `confirmation_text` passes `booking.venue.tz` down from the booking it already holds.
-
-That signature change is a breaking one, so I grepped `src/` for callers: `confirmation_text` is the only one, and it is updated. The two sibling call sites in `email.py` and `report.py` build their own day strings from `starts_at.astimezone(venue.tz)` rather than going through `booking_day`, which is why they were already correct and why confirm.py was the outlier.
-
-I ran `tests/test_confirm.py` in full and all 12 tests pass, including the Sydney case. I did not run the rest of the suite, so nothing outside that file has been re-verified.

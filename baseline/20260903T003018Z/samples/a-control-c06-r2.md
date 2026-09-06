@@ -1,1 +1,0 @@
-You're right — I misread it. The guard `if e.status < 500 and e.status != 429: raise` re-raises 400 immediately, so it never reaches the `sleep`. Only 5xx and 429 retry, which is the correct behavior. Withdraw my earlier recommendation; there's nothing to narrow here.

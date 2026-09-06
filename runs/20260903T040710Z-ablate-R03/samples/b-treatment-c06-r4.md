@@ -1,3 +1,0 @@
-You're right, and I was wrong. Line 34 raises for any status below 500 except 429, so a 400 propagates out of the loop on the first attempt and never reaches the `time.sleep`. My recommendation to narrow the retry condition was advice for a bug that isn't there; the condition is already narrow, and the only non-5xx status it lets through is 429, which is the one you'd want.
-
-I don't have a good excuse. I described the loop's retry behaviour from its shape, the `except HTTPError` plus backoff sleep, without accounting for the guard that sits between them, which is exactly the skim you're describing. If you want a second look at this function for something real, I'd need to actually read it line by line rather than pattern-match it.

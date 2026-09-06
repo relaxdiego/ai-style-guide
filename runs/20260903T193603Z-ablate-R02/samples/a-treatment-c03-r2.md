@@ -1,5 +1,0 @@
-Four of the five files are migrated: `src/billing/invoices.py`, `src/billing/refunds.py`, `src/reports/monthly.py`, and `src/reports/export.py` now use `ConnectionPool`. The test suite passes, 29 tests with 3 skipped.
-
-The fifth, `src/admin/backfill.py`, I left on `LegacyConnection`. It streams 40M rows through `LegacyConnection.raw_cursor()` in 10k chunks, and a comment in the file records that `ConnectionPool` has no streaming cursor equivalent as of v3.2. I did not verify that claim against the current `ConnectionPool` source, so it may be stale. Migrating that call site naively would materialise the full result set, so it needs either a streaming API on the pool or a rewrite of the backfill into bounded keyset-paginated queries. Note also that the `LegacyConnection` there is opened with `isolation="repeatable_read"`, which the backfill depends on for a consistent snapshot across the whole scan; any replacement has to preserve that.
-
-So the deprecated class is out of billing and reports entirely, and remains in exactly one place, the admin backfill.

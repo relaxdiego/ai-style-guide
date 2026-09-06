@@ -1,7 +1,0 @@
-# Fix permanent lockout when rate-limit key loses its TTL
-
-`RateLimiter.check` previously issued INCR and EXPIRE as two separate round trips to Redis, setting the TTL only when the counter came back as 1. If the process died or the connection timed out in the gap between those calls, the key was left at 1 with no expiry, and since the TTL was only ever set on the first increment, no later call would repair it. The counter then climbed monotonically forever and the caller was rate-limited for good. This is what caused the recent production incident: roughly 40 users were locked out indefinitely and had to be cleared by hand from Redis.
-
-The fix collapses both commands into a single pipeline, so they are sent together and the key can no longer be left without an expiry by a crash between them. The `expire` call now uses `nx=True` rather than being guarded by a check on the returned count, which preserves the original intent of not extending the window on every request while making the operation safe to issue unconditionally. Note that a pipeline is not a transaction: `nx=True` is what keeps the semantics correct, not atomicity, and it also means a key that somehow lacks a TTL will acquire one on the next request instead of staying broken until someone intervenes.
-
-A regression test in `tests/test_ratelimit.py` covers the crash window between the increment and the expiry, asserting that the key carries a TTL regardless of where the failure lands.

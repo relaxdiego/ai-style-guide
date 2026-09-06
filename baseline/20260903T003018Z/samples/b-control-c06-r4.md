@@ -1,3 +1,0 @@
-You're right, and I apologize — I misread it. Line 34 does exactly what you say: any status under 500 other than 429 re-raises immediately, so 400s never reach the sleep. My claim was wrong and my recommendation to narrow the condition was unnecessary — the condition is already narrow, and retrying 429 alongside 5xx is the correct behavior.
-
-One unrelated thing I did notice while re-reading, take it or leave it: the `time.sleep(2 ** i)` runs on the final iteration too. After the last attempt fails, it sleeps (16s with the default `attempts=5`) and then falls out of the loop to raise `RetryExhausted()`. Guarding it with `if i < attempts - 1` would drop that dead wait. Minor, and separate from what you asked about.

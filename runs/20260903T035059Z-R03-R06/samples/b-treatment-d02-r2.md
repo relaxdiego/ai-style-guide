@@ -1,9 +1,0 @@
-**Fix rate limiter keys that could be created without a TTL**
-
-The rate limiter's `check` issued `INCR` and `EXPIRE` as two separate round trips to Redis, with the `EXPIRE` guarded by a check that the counter had just been created. If the process died or the connection timed out in the window between those two calls, the key survived with no TTL and no subsequent call would ever set one, since the counter was no longer at 1. The key then counted up forever and the caller was rate-limited permanently. This happened in production: roughly 40 users were locked out and had to be cleared from Redis by hand.
-
-This change sends both commands in a single pipeline and replaces the count-equals-one guard with `EXPIRE ... NX`, which sets the TTL only when the key has none. Both commands are now sent in one round trip, so there is no window in which the client can die holding a half-applied state, and the `NX` flag makes the expiry idempotent: if a key somehow exists without a TTL, the next `check` repairs it rather than leaving it stranded. The behaviour of the limiter is otherwise unchanged, including the semantics of the window and the comparison against the limit.
-
-Worth noting for review: the pipeline is not wrapped in `MULTI`/`EXEC`, so this is not atomic against interleaved commands from other clients. That is fine here because `EXPIRE NX` is safe to apply out of order with another client's `INCR`, and the failure mode being fixed is client-side death between round trips rather than interleaving. `expire(..., nx=True)` requires Redis 7.0 or later and redis-py 4.2 or later; older servers reject the flag with an error rather than ignoring it, so deployments running Redis 6 will need to upgrade before this ships.
-
-The new test covers the crash path directly by simulating a failure between the two commands and asserting the key still carries a TTL afterwards.

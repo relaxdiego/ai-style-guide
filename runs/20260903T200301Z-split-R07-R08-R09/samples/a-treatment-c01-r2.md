@@ -1,7 +1,0 @@
-This change shortens the session cache TTL in production from an hour to fifteen minutes, so anything relying on sessions surviving longer than 900 seconds will now see them expire.
-
-The literal `3600` on `src/cache/session.py:14` was shadowing `SESSION_TTL_SECONDS = 900` in `src/config/defaults.py:31`, which is the value the config file advertises as the session TTL. I replaced the literal with the constant, so `get()` at line 88 now expires entries against the configured value rather than the hardcoded one. The two had presumably drifted apart at some point; the config value is the one I assumed was authoritative, since it is the one a reader would go looking for. If 3600 was in fact the intended live behaviour, the fix belongs in `defaults.py` instead and this commit should be reverted.
-
-`tests/test_session_cache.py::test_expiry_boundary` failed on the old literal, and I updated its assertion to reference `SESSION_TTL_SECONDS` too. Worth knowing that this weakens the test: it now compares the constant to itself and will pass for any value, so it no longer pins the TTL to anything in particular. A test asserting the concrete `900`, or one that exercises the expiry boundary by advancing a clock past it, would still catch a future drift; the version I left will not.
-
-All eight tests in that file pass, and the constant resolves in both modules without a new import.

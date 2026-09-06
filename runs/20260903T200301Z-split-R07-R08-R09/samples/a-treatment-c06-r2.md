@@ -1,3 +1,0 @@
-You're right, and my earlier claim was wrong. The guard raises on any 4xx other than 429, so a 400 never reaches the sleep and never retries; the retry set is 5xx plus 429, which is what you'd want. Disregard the recommendation to narrow it, there's nothing to narrow.
-
-One separate thing in the same function, if you want it: the sleep runs on the final iteration as well, so after the last attempt fails the helper waits `2 ** (attempts - 1)` seconds before raising `RetryExhausted`. At `attempts=5` that's a 16-second pause that buys nothing, and moving the sleep to skip the last pass removes it.

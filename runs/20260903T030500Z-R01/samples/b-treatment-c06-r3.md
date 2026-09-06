@@ -1,3 +1,0 @@
-You're right — I misread it. Line 33 raises immediately on any status under 500 except 429, so a 400 propagates on the first attempt and never reaches the sleep. My claim was wrong and the recommendation to narrow the condition was unnecessary.
-
-One thing worth flagging, though it's not what I originally said: the code retries 429s but ignores `Retry-After`, so it backs off on its own schedule regardless of what the server asked for. Whether that matters depends on the API you're calling.

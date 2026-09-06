@@ -1,1 +1,0 @@
-You're right, and my earlier claim was wrong. Line 34 raises immediately for any status below 500 except 429, so a 400 never reaches the `sleep` and never retries. The retry set is exactly 5xx plus 429, which is what you want. Disregard the recommendation to narrow the condition; there's nothing to narrow.

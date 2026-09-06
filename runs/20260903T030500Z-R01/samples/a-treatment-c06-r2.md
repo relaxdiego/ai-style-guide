@@ -1,1 +1,0 @@
-You're right — I misread it. `if e.status < 500 and e.status != 429: raise` re-raises a 400 on the first attempt, so it never reaches the `sleep`. The retry set is 5xx plus 429, which is what you'd want. Ignore the recommendation to narrow the condition; there's nothing to change here.

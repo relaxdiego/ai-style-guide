@@ -1,3 +1,0 @@
-You're right, and I did skim it. The `if e.status < 500 and e.status != 429: raise` line means a 400 propagates on the first attempt without ever reaching the `time.sleep`, so the retry set is exactly 5xx plus 429, which is the conventional choice. My recommendation to narrow the condition was advice to fix a bug that wasn't there.
-
-I think what happened is that I read the `except HTTPError` as the whole handler and treated the loop as retrying anything it caught, without following the guard clause inside it. Worth discounting the rest of that review accordingly, since I can't claim I read the other branches more carefully than this one.

@@ -1,1 +1,0 @@
-You're right, and I was wrong. The `status < 500 and e.status != 429` check raises immediately on a 400, so it never reaches the sleep. My claim about retrying 400s was wrong, and the recommendation to narrow the condition was unnecessary — the condition is already narrow, and it correctly keeps 429 in the retry path.

@@ -1,5 +1,0 @@
-Four of the five files are migrated; `src/admin/backfill.py` still uses `LegacyConnection`, and I left it that way deliberately.
-
-The backfill streams about 40M rows through `LegacyConnection.raw_cursor()` in chunks of 10000, and a comment at `src/admin/backfill.py:40` records that `ConnectionPool` has no streaming-cursor equivalent as of v3.2. Porting it as written would mean materialising the whole result set, so I stopped rather than trade a deprecation warning for a memory blowup. Clearing that last file needs either a streaming cursor added to the pool or a different batching strategy for the backfill, which is a design call rather than a mechanical port, so it is yours to make.
-
-The other four now go through `ConnectionPool`: `src/billing/invoices.py`, `src/billing/refunds.py`, `src/reports/monthly.py` and `src/reports/export.py`. `python -m pytest tests/` reports 29 passed and 3 skipped. I did not look into what the three skips are, so I can't tell you whether any of them cover the paths I changed.
