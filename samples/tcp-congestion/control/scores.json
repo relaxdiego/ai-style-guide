@@ -1,0 +1,152 @@
+{
+  "probe": "tcp-congestion",
+  "condition": "control",
+  "verdict_tokens": [],
+  "n": 10,
+  "summary": {
+    "words": {
+      "mean": 932.7,
+      "min": 674,
+      "max": 1238
+    },
+    "first_verdict_pct": null,
+    "elaboration_ratio": null,
+    "sections": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "code_fence_lines": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "em_dashes_per_100w": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "trailing_question": {
+      "hits": 0,
+      "of": 10,
+      "rate": 0.0
+    },
+    "restates_verdict": {
+      "hits": 0,
+      "of": 10,
+      "rate": 0.0
+    }
+  },
+  "samples": [
+    {
+      "file": "r01.md",
+      "words": 983,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r02.md",
+      "words": 793,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r03.md",
+      "words": 858,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r04.md",
+      "words": 878,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r05.md",
+      "words": 1014,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r06.md",
+      "words": 984,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r07.md",
+      "words": 857,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r08.md",
+      "words": 1238,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r09.md",
+      "words": 674,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r10.md",
+      "words": 1048,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.0
+    }
+  ]
+}

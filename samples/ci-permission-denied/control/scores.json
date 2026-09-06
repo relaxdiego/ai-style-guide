@@ -1,0 +1,164 @@
+{
+  "probe": "ci-permission-denied",
+  "condition": "control",
+  "verdict_tokens": [
+    "chmod",
+    "executable",
+    "+x"
+  ],
+  "n": 10,
+  "summary": {
+    "words": {
+      "mean": 344.2,
+      "min": 301,
+      "max": 405
+    },
+    "first_verdict_pct": {
+      "mean": 3.0,
+      "min": 0.5,
+      "max": 13.8
+    },
+    "elaboration_ratio": {
+      "mean": 97.0,
+      "min": 86.2,
+      "max": 99.5
+    },
+    "sections": {
+      "mean": 0.2,
+      "min": 0,
+      "max": 2
+    },
+    "code_fence_lines": {
+      "mean": 0.9,
+      "min": 0,
+      "max": 2
+    },
+    "em_dashes_per_100w": {
+      "mean": 0.1,
+      "min": 0.0,
+      "max": 0.33
+    },
+    "trailing_question": {
+      "hits": 0,
+      "of": 10,
+      "rate": 0.0
+    },
+    "restates_verdict": {
+      "hits": 6,
+      "of": 10,
+      "rate": 0.6
+    }
+  },
+  "samples": [
+    {
+      "file": "r01.md",
+      "words": 322,
+      "first_verdict_pct": 0.9,
+      "elaboration_ratio": 99.1,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 2,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r02.md",
+      "words": 366,
+      "first_verdict_pct": 0.8,
+      "elaboration_ratio": 99.2,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 1,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r03.md",
+      "words": 405,
+      "first_verdict_pct": 0.5,
+      "elaboration_ratio": 99.5,
+      "trailing_question": false,
+      "restates_verdict": true,
+      "sections": 0,
+      "code_fence_lines": 1,
+      "em_dashes_per_100w": 0.25
+    },
+    {
+      "file": "r04.md",
+      "words": 348,
+      "first_verdict_pct": 4.6,
+      "elaboration_ratio": 95.4,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 1,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r05.md",
+      "words": 301,
+      "first_verdict_pct": 1.0,
+      "elaboration_ratio": 99.0,
+      "trailing_question": false,
+      "restates_verdict": true,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.33
+    },
+    {
+      "file": "r06.md",
+      "words": 312,
+      "first_verdict_pct": 1.0,
+      "elaboration_ratio": 99.0,
+      "trailing_question": false,
+      "restates_verdict": true,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.32
+    },
+    {
+      "file": "r07.md",
+      "words": 351,
+      "first_verdict_pct": 0.9,
+      "elaboration_ratio": 99.1,
+      "trailing_question": false,
+      "restates_verdict": true,
+      "sections": 0,
+      "code_fence_lines": 1,
+      "em_dashes_per_100w": 0.28
+    },
+    {
+      "file": "r08.md",
+      "words": 363,
+      "first_verdict_pct": 0.8,
+      "elaboration_ratio": 99.2,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "sections": 0,
+      "code_fence_lines": 1,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r09.md",
+      "words": 334,
+      "first_verdict_pct": 13.8,
+      "elaboration_ratio": 86.2,
+      "trailing_question": false,
+      "restates_verdict": true,
+      "sections": 0,
+      "code_fence_lines": 1,
+      "em_dashes_per_100w": 0.0
+    },
+    {
+      "file": "r10.md",
+      "words": 340,
+      "first_verdict_pct": 5.9,
+      "elaboration_ratio": 94.1,
+      "trailing_question": false,
+      "restates_verdict": true,
+      "sections": 2,
+      "code_fence_lines": 1,
+      "em_dashes_per_100w": 0.0
+    }
+  ]
+}
