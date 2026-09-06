@@ -1,6 +1,6 @@
 {
   "probe": "ci-permission-denied",
-  "condition": "001",
+  "condition": "no-slop",
   "verdict_tokens": [
     "chmod",
     "executable",

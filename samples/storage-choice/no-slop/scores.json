@@ -1,6 +1,6 @@
 {
   "probe": "storage-choice",
-  "condition": "001",
+  "condition": "no-slop",
   "verdict_tokens": [
     "SQLite",
     "Postgres"

@@ -1,200 +1,100 @@
 # ai-style-guide
 
-A style guide for Claude's prose, written against measured evidence rather than
-taste. Each rule has to show a before and after on captured samples.
+An experiment harness that measures whether a written style rule, delivered to Claude Code as an [output style](https://code.claude.com/docs/en/output-styles), actually changes the model's output, and whether it damages anything else in the process.
 
-## Method
+## How the experiment is set up
 
-1. **Probe** — a prompt in `prompts/`, chosen to provoke a specific behaviour.
-2. **Capture** — N clean-room responses under a condition (`control`, or a rule id).
-3. **Score** — deterministic structural metrics over the samples.
-4. **Rule** — written only once a capture shows the behaviour is real and stable.
+Every probe runs under scaffolding that is byte-identical except for the output style setting, so a measured delta is attributable to a rule rather than to the environment.
 
-## Layout
+**The four probes** live in `prompts/` as markdown files with YAML frontmatter (`id`, `kind`, `intent`, and optionally `tools`, `verdict_tokens`, `coverage`).
+
+| id | kind | what it tests |
+|---|---|---|
+| `storage-choice` | decision | "Postgres or SQLite for a local-first app", asked with stated anxiety. Verdict tokens: SQLite, Postgres |
+| `ci-permission-denied` | debug | A script fails on GitHub Actions with "permission denied". One short correct answer exists; the probe tests whether a settled diagnosis still attracts an essay. Verdict tokens: chmod, executable, +x |
+| `tcp-congestion` | explain | "Explain how TCP congestion control works." No verdict to land, and length is legitimate. Guard probe, 10 coverage markers (slow start, congestion avoidance, AIMD, fast retransmit/recovery, CUBIC, BBR, duplicate ACK, RTT, window, packet loss) |
+| `cleanup-codebase` | underspecified | "My deploy started failing yesterday and I don't know why. Can you help?" The correct move is a clarifying question. Guard probe, 3 coverage markers (logs/output/error, repo/path/project, platform/pipeline) |
+
+`verdict_tokens` are strings whose first appearance is treated as the point where the response commits to an answer. `coverage` holds regexes; the fraction present becomes `coverage_pct`.
+
+`cleanup-codebase` declares `tools: Read,Glob,Grep`. The reason sits in that probe's `intent` field: with no tools at all, the model emitted hallucinated tool-call markup instead of prose in 5 of 10 samples. Given tools and an empty sandbox, it looks, finds nothing, and asks. Both conditions see the same empty sandbox.
+
+**The clean room.** `bin/capture.sh` creates a throwaway `mktemp -d` run directory, empty and non-git, deleted on exit. Into it, it copies the style's `style.md` unchanged as `.claude/output-styles/<name>.md`, and writes a `.claude/settings.json` that sets `outputStyle`. The control arm writes `{}` for settings instead. Same directory, same scaffold, same flags; only the `outputStyle` key differs.
+
+Each capture writes `samples/<probe-id>/<condition>/rXX.md` files plus a `meta.json` recording probe, condition, rule, delivery, model, CLI version (observed 2.1.263), capture timestamp, reps, tools, the exact flags, and a description of the cwd.
+
+**Nothing is rewritten on the way in.** `styles/<name>/style.md` is an output style and nothing else: `name`, `description`, `keep-coding-instructions`, and the prose. Claude Code keys a style by its frontmatter `name`, so the harness names the copied file after that and points `settings.json` at the same string. The file under measurement is the file a user would copy into their own `.claude/output-styles/`. What the style claims lives beside it in `claims.yaml`, out of the delivered path entirely.
+
+## The metrics
+
+All metrics are deterministic and structural, computed per sample file by `bin/score.py`.
+
+| metric | what it counts |
+|---|---|
+| `words` | total words |
+| `first_verdict_pct` | how far into the response the first verdict token appears |
+| `elaboration_ratio` | share of the response that comes after the commit point (100 minus `first_verdict_pct`) |
+| `trailing_question` | whether a question appears in the final 15% of words |
+| `restates_verdict` | whether the verdict reappears in the final 20% of words |
+| `prose_paragraphs`, `bullets`, `sections`, `code_fence_lines` | structural shape |
+| `em_dashes_per_100w` | em dash density |
+| `coverage_pct` | fraction of the probe's coverage regexes present |
+| `banned_terms` | occurrences of the rule's banned list, word-bounded so "genuine" does not also match every "genuinely" |
+
+`scores.json`, written into each sample directory, holds probe, condition, verdict tokens, n, a summary (mean/min/max, or hits/of/rate for the two booleans), and the per-sample rows.
+
+## The contract a style signs
+
+`styles/<name>/claims.yaml` states what a style is accountable for, and `--check` holds it to exactly that.
+
+| key | meaning |
+|---|---|
+| `id` | also the condition directory name under `samples/<probe>/` |
+| `owns` | the metrics the style claims to move |
+| `probes` | where those metrics must improve |
+| `guards` | probes that must not move |
+| `banned` | terms counted for the `banned_terms` metric |
+
+`bin/score.py --check <style-dir>` exits 0 or 1 after four checks:
+
+1. **Provenance.** Every capture records the sha256 of the `style.md` it ran under. If that no longer matches the file on disk, the samples describe text nobody is shipping any more, and the check fails with a recapture instruction instead of reporting stale numbers.
+2. **Targets.** For each owned metric on each target probe, control to style must move in the improving direction. Otherwise: FAIL, "owned metric did not improve".
+3. **No headroom.** If an owned metric's control is already 0 on every probe, that is reported as "no headroom" and FAILS. The style cannot be credited for moving something that was never there.
+4. **Guards.** Tolerance is ±15%. Where a probe declares coverage markers, `coverage_pct` is guarded and word count is reported only; the rationale in the code is that word count is the wrong guard for an explanation, since compressing without dropping anything is a pass. Only a drop in coverage counts against a style, and more coverage is fine. Where a probe declares no coverage markers, `words` is guarded.
+
+`--check` writes its verdict back into the style directory as `results.md` and `results.json`, so a style ships with the record that justifies it. Both are rewritten only when the numbers change, so the date they carry is when the result last moved rather than when the check last ran. The current one is [`styles/no-slop/results.md`](styles/no-slop/results.md).
+
+## Running it
 
 ```
-bin/capture.sh          clean-room runner
-bin/score.py            structural scorer
-prompts/<id>.md         probe: frontmatter + prompt body
-style/rules/<id>-*.md   the guide, one rule per file
-samples/<probe>/<condition>/
-    r01.md … rNN.md     raw responses, verbatim
-    meta.json           model, CLI version, date, exact flags
-    scores.json         generated by bin/score.py
+# capture 10 control reps (default) for a probe
+bin/capture.sh prompts/storage-choice.md control
+
+# capture 10 reps under a style; the condition name becomes the sample directory
+bin/capture.sh prompts/storage-choice.md no-slop 10 styles/no-slop
+
+# score one or more directories; deltas are shown against the first
+bin/score.py samples/storage-choice/control samples/storage-choice/no-slop
+
+# check the style against its claims, and rewrite its results.md
+bin/score.py --check styles/no-slop
 ```
 
-A sample is identified by `(probe, condition, rep)` and nothing else. There are
-no timestamped directories — git history is the time axis.
+Probe files live in `prompts/`. `bin/capture.sh <probe.md> <condition> [reps] [style-dir]` defaults to 10 reps. Name the condition after the style's `id` so `--check` can find it. `MODEL` defaults to `opus` and `CONCURRENCY` to `3`.
 
-## The clean room
+Environment setup is devbox plus direnv (`devbox.json`, `.envrc`). `.envrc` exports `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`.
 
-Samples are worthless if the harness leaks into them. The first capture attempt
-proved this: the sub-agent had tools, read the working directory, and opened by
-describing this repo. Moving to a different directory would not have fixed that.
-Removing its tools did.
+## Repo layout
 
-`bin/capture.sh` runs each rep from an empty, non-git `mktemp -d` as:
-
-| Flag | Removes |
-| --- | --- |
-| `--tools ""` | the model's ability to inspect anything — and with it the Skill tool, so no skills or plugins load |
-| per-probe `tools:` | opt back in to read-only tools where a probe needs them (see below) |
-| `--setting-sources project` | user and local settings; only the synthesized run-dir `.claude/` applies |
-| `--strict-mcp-config` | MCP servers |
-| empty non-git cwd | git status and file listings in the system prompt |
-
-Auth stays normal OAuth. `meta.json` records the CLI version per capture, because
-`claude` self-updates and samples taken months apart are not automatically
-comparable.
-
-### Why not `--safe-mode`
-
-`--safe-mode` looks like the right tool and is a trap, for two reasons.
-
-First, it disables output styles silently — a canary token planted in a style
-never appeared in the output, with no warning. Used here, every "with rule"
-capture would have been an unlabelled control.
-
-Second, and less obviously, it **changes the prose it is supposed to be
-measuring**. It disables *all* output styles, including Claude Code's own default
-one, and that default is what suppresses markdown segmentation and trailing
-questions. Same prompt, same day, only the flag differing:
-
-| | headers | bold | em-dashes | questions | words |
-| --- | --- | --- | --- | --- | --- |
-| with `--safe-mode` | 0/3/3 | 8/14/8 | 7/3/2 | 2/2/1 | 437/451/508 |
-| without | 0/0/0 | 0/0/0 | 2/0/0 | 0/0/0 | 499/543/490 |
-
-Length is untouched; structure is transformed. A baseline captured under
-`--safe-mode` would have measured Claude with its normal formatting guidance
-removed, and rules written against it would target artifacts real users never
-see. Captures run without it.
-
-Its intended benefit costs nothing to give up. Asked to enumerate its skills,
-plugins and commands, the model answers NONE either way, because `--tools ""`
-already removes the Skill tool. There is no user-level `CLAUDE.md`, and
-`--setting-sources project` keeps user settings out.
-
-### When a probe needs tools
-
-Removing tools is right for prose probes and wrong for anything that reads as a
-task. Claude Code still tells the model it is an agent, so a task-shaped prompt
-makes it reach for tools it does not have and emit hallucinated tool-call markup
-instead of prose — 5 of 10 samples on the first `cleanup-codebase` probe.
-Rewording does not fix it; three differently-phrased underspecified prompts all
-did the same thing. The framing causes it, not the wording.
-
-A probe can therefore declare `tools: Read,Glob,Grep` in its frontmatter. It
-still runs in the empty sandbox, so the model looks, finds nothing, and asks the
-question the probe exists to measure. Both conditions see the same empty sandbox,
-so the comparison holds; the sandbox does get mentioned in the prose, symmetrically.
-
-### Delivering a rule
-
-A rule is shipped as an **output style**, the way a user would really apply one —
-not as a `CLAUDE.md` and not as an appended system prompt. Output styles are only
-discovered from a project `.claude/` directory, so `capture.sh` synthesizes one
-inside the throwaway run dir. Our bookkeeping frontmatter is stripped and replaced
-with the minimal `name`/`description` header Claude Code expects, so the rule
-format in `style/rules/` does not have to satisfy anyone else's schema.
-
-Both conditions get an identical `.claude/` scaffold; only the `outputStyle` key
-differs. The measured delta is therefore the rule *as delivered*, not the rule
-text in the abstract.
-
-## Metrics
-
-| Metric | What it catches | Baseline |
-| --- | --- | --- |
-| `words` | raw volume | 344 / 571 / 933 by probe |
-| `first_verdict_pct` | how far in the answer first appears | 0.1–3% |
-| `elaboration_ratio` | share of the response that follows the answer | 97–99.9% |
-| `restates_verdict` | the answer given twice, wrapped around the body | 6–9 of 10 |
-| `sections` | structural segmentation of a single point | 0 |
-| `trailing_question` | a clarifying question asked *after* committing | 0 of 40 |
-| `em_dashes_per_100w` | texture | ~0.1 |
-| `coverage_pct` | share of a probe's declared concepts still present | 100% |
-
-`words` and `prose_paragraphs` are the scores that carry weight. On
-`storage-choice` the control runs 571 words and 6.5 prose paragraphs, and the
-verdict lands in the first word — so the wall is what follows the answer, not
-where the answer sits.
-
-`elaboration_ratio` and `restates_verdict` are retained but are **not usable as
-rule targets on these probes**. The control already answers immediately, so
-elaboration_ratio sits at 99.9% with no headroom; and `restates_verdict` fires on
-any late mention of a verdict token, which on a SQLite-vs-Postgres probe is every
-substantive answer. Both were tried as owned metrics for rule 001 and measured
-nothing.
-
-`sections`, `trailing_question` and `em_dashes_per_100w` sit at the floor in the
-control, so no rule can improve them. They are retained as **guards**: a rule
-that starts introducing headings or trailing questions will show up here.
-
-**Only structural metrics survived.** Lexical Claude-ism patterns — bolded
-paragraph leads, "the real question is", "it isn't X, it's Y" — were tried and
-discarded; they fired 1/0/4 and 0/0/1 across the first samples, because the
-recurring beats are stable in meaning but not in wording.
-
-`first_verdict_pct` is a proxy: it finds the first mention of a candidate answer
-from the probe's `verdict_tokens` and assumes that is where the response commits.
-It matched a hand read on the early samples. It is not a commitment detector, and
-a rule that games it has not succeeded.
-
-## Rules
-
-One rule per file in `style/rules/`, numbered so each owns a named piece of slop.
-The frontmatter is a checkable claim, not a comment:
-
-```yaml
----
-id: 001
-name: land-the-answer
-owns:    [elaboration_ratio, trailing_question, restates_verdict]
-probes:  [storage-choice, ci-permission-denied]
-guards:  [tcp-congestion, cleanup-codebase]
----
 ```
-
-A rule that bans specific words also lists them under `banned:`, and can then own
-the synthetic metric `banned_terms` — mean word-bounded hits per sample.
-
-`bin/score.py --check style/rules/001-*.md` verifies both halves of the claim:
-the owned metrics improved on the listed probes, and the guard probes held.
-Numbering makes it visible when a later rule is poaching an earlier rule's
-metrics rather than owning new slop.
-
-An owned metric whose control value is already zero is reported as having no
-headroom rather than counted as a failure — but if no probe gives it room to
-move, the rule cannot be credited for it and the check fails. `banned_terms` is
-zero on `ci-permission-denied` and 1.70 on `storage-choice`, so it is measurable
-there and only there.
-
-Guards are checked on substance where a probe declares `coverage:` markers, and
-on word count otherwise. Compressing an explanation without dropping any of its
-concepts is a pass, not collateral damage — rule 001 cut `tcp-congestion` by 35%
-while coverage held at 10/10 markers, and guarding on length alone would have
-failed it wrongly.
-
-## Guarding against the metric
-
-Two probes exist to catch rules that win the score and lose the point:
-
-- `tcp-congestion` — an open explanation where length is legitimate. A rule that
-  shortens this is over-firing.
-- `cleanup-codebase` — too vague to answer, where asking first is correct. A rule
-  that suppresses the question has learned the wrong lesson.
-
-Samples stay committed and readable. The scores are a tripwire, not a target.
-
-## Usage
-
-```sh
-bin/capture.sh prompts/storage-choice.md control 10
-bin/capture.sh prompts/storage-choice.md 001 10 style/rules/001-land-the-answer.md
-bin/score.py samples/storage-choice/control samples/storage-choice/001
-bin/score.py --check style/rules/001-land-the-answer.md
+prompts/<probe>.md              probe: frontmatter + prompt body
+styles/<style>/
+  style.md                      the output style, delivered verbatim
+  claims.yaml                   owns / probes / guards / banned
+  results.md, results.json      written by --check
+samples/<probe>/control/        r01.md … r10.md, meta.json, scores.json
+samples/<probe>/<style>/        the same, captured under that style
+bin/capture.sh                  clean-room capture
+bin/score.py                    metrics, scores.json, --check
+devbox.json, .envrc             environment
 ```
-
-`bin/score.py` writes `scores.json` into each directory and prints deltas against
-the first directory given.

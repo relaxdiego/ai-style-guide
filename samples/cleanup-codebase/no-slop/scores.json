@@ -1,44 +1,44 @@
 {
-  "probe": "tcp-congestion",
-  "condition": "001",
+  "probe": "cleanup-codebase",
+  "condition": "no-slop",
   "verdict_tokens": [],
   "n": 10,
   "summary": {
     "words": {
-      "mean": 602.9,
-      "min": 456,
-      "max": 816
+      "mean": 132.3,
+      "min": 107,
+      "max": 175
     },
     "first_verdict_pct": null,
     "elaboration_ratio": null,
     "prose_paragraphs": {
-      "mean": 5.8,
-      "min": 3,
-      "max": 9
+      "mean": 2.9,
+      "min": 2,
+      "max": 3
     },
     "bullets": {
-      "mean": 4.9,
-      "min": 4,
-      "max": 7
+      "mean": 3.8,
+      "min": 3,
+      "max": 4
     },
     "sections": {
-      "mean": 1.1,
+      "mean": 0,
       "min": 0,
-      "max": 5
+      "max": 0
     },
     "code_fence_lines": {
-      "mean": 0.1,
+      "mean": 0,
       "min": 0,
-      "max": 1
+      "max": 0
     },
     "em_dashes_per_100w": {
-      "mean": 0.3,
-      "min": 0.0,
-      "max": 0.57
+      "mean": 1.7,
+      "min": 0.6,
+      "max": 3.6
     },
     "coverage_pct": {
-      "mean": 94.0,
-      "min": 90.0,
+      "mean": 100.0,
+      "min": 100.0,
       "max": 100.0
     },
     "trailing_question": {
@@ -55,143 +55,143 @@
   "samples": [
     {
       "file": "r01.md",
-      "words": 543,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 6,
-      "bullets": 4,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.18,
-      "coverage_pct": 100.0
-    },
-    {
-      "file": "r02.md",
-      "words": 558,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 5,
-      "bullets": 4,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.36,
-      "coverage_pct": 90.0
-    },
-    {
-      "file": "r03.md",
-      "words": 456,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 5,
-      "bullets": 4,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0,
-      "coverage_pct": 90.0
-    },
-    {
-      "file": "r04.md",
-      "words": 517,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 6,
-      "bullets": 4,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.39,
-      "coverage_pct": 100.0
-    },
-    {
-      "file": "r05.md",
-      "words": 580,
+      "words": 107,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
       "prose_paragraphs": 3,
-      "bullets": 7,
-      "sections": 4,
+      "bullets": 3,
+      "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.52,
+      "em_dashes_per_100w": 0.93,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r02.md",
+      "words": 113,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 1.77,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r03.md",
+      "words": 111,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.9,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r04.md",
+      "words": 139,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 3,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.72,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r05.md",
+      "words": 167,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.6,
       "coverage_pct": 100.0
     },
     {
       "file": "r06.md",
-      "words": 816,
+      "words": 175,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
-      "prose_paragraphs": 9,
-      "bullets": 7,
+      "prose_paragraphs": 3,
+      "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0,
-      "coverage_pct": 90.0
+      "em_dashes_per_100w": 2.86,
+      "coverage_pct": 100.0
     },
     {
       "file": "r07.md",
-      "words": 610,
+      "words": 157,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
-      "prose_paragraphs": 6,
-      "bullets": 5,
-      "sections": 2,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.49,
+      "em_dashes_per_100w": 2.55,
       "coverage_pct": 100.0
     },
     {
       "file": "r08.md",
-      "words": 698,
+      "words": 111,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
-      "prose_paragraphs": 5,
+      "prose_paragraphs": 3,
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.43,
-      "coverage_pct": 90.0
+      "em_dashes_per_100w": 0.9,
+      "coverage_pct": 100.0
     },
     {
       "file": "r09.md",
-      "words": 548,
+      "words": 132,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
-      "prose_paragraphs": 6,
+      "prose_paragraphs": 3,
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.36,
-      "coverage_pct": 90.0
+      "em_dashes_per_100w": 2.27,
+      "coverage_pct": 100.0
     },
     {
       "file": "r10.md",
-      "words": 703,
+      "words": 111,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
-      "prose_paragraphs": 7,
-      "bullets": 6,
-      "sections": 5,
-      "code_fence_lines": 1,
-      "em_dashes_per_100w": 0.57,
-      "coverage_pct": 90.0
+      "prose_paragraphs": 2,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 3.6,
+      "coverage_pct": 100.0
     }
   ]
 }

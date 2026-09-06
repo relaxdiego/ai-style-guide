@@ -1,0 +1,16 @@
+# What this style claims, and what bin/score.py --check holds it to.
+#
+#   id      the condition directory name under samples/<probe>/
+#   owns    metrics that must improve on every probe in `probes`
+#   guards  probes that must not move (coverage where declared, else words)
+#   banned  terms counted for the banned_terms metric, word-bounded
+
+id: no-slop
+
+owns:   [words, prose_paragraphs, banned_terms]
+probes: [storage-choice, ci-permission-denied]
+guards: [tcp-congestion, cleanup-codebase]
+
+banned: ["load-bearing", "worth noting", "worth naming", "worth knowing",
+  "honestly", "frankly", "genuine", "genuinely", "seam", "seams",
+  "absorb the divergence", "wearing", "dressed as"]

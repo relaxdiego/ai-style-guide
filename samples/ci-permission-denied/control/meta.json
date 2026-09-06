@@ -1,8 +1,9 @@
 {
   "probe": "ci-permission-denied",
   "condition": "control",
-  "rule": null,
+  "style": null,
   "delivery": null,
+  "style_sha256": null,
   "model": "opus",
   "cli_version": "2.1.263",
   "captured": "2026-09-06T14:46:20Z",

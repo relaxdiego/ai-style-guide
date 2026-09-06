@@ -2,23 +2,33 @@
 """Score captured samples for wall-of-text structure.
 
     bin/score.py samples/storage-choice/control [more/dirs ...]
-    bin/score.py --check style/rules/001-land-the-answer.md
+    bin/score.py --check styles/no-slop
 
 Writes scores.json into each directory and prints a table. Given more than one
 directory, prints deltas against the first (the baseline).
 
---check reads a rule's frontmatter and verifies the two claims it makes: that the
-metrics it *owns* improved on the probes it targets, and that its guard probes
-did not move. A rule that shortens an explanation probe is over-firing.
+--check reads a style's claims.yaml and verifies the two claims it makes: that
+the metrics it *owns* improved on the probes it targets, and that its guard
+probes did not move. A style that shortens an explanation probe is over-firing.
+The verdict is written back into the style directory as results.md and
+results.json, so a style ships with its own measured record. Those files are
+rewritten only when the numbers change, so their `checked` date is the date the
+result last moved rather than the date --check last ran.
+
+Samples record the sha256 of the style.md they were captured under. Editing a
+style invalidates its samples, and --check fails rather than reporting stale
+numbers against the edited text.
 
 Every metric is deterministic and structural. Lexical "Claude-ism" patterns were
 tried and discarded: across the first three control samples they fired 1/0/4 and
 0/0/1, because the recurring beats are stable in meaning but not in wording.
 """
+import hashlib
 import json
 import re
 import statistics
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 TAIL_QUESTION = 0.15   # final fraction of words searched for a trailing question
@@ -172,23 +182,60 @@ def main(dirs):
 
 
 
-# --- rule ownership checks -------------------------------------------------
+# --- style claim checks ----------------------------------------------------
 
-def rule_meta(path):
-    """Parse the bookkeeping frontmatter of a rule file."""
-    text = Path(path).read_text()
-    meta = {}
-    for key in ("id", "name"):
-        m = re.search(rf"^{key}:\s*(.+)$", text, re.M)
-        if m:
-            meta[key] = m.group(1).strip()
+def load_claims(style_dir):
+    """Parse styles/<name>/claims.yaml.
+
+    Hand-parsed: the schema is an id and four inline lists, and a YAML
+    dependency would not earn its keep.
+    """
+    path = Path(style_dir) / "claims.yaml"
+    if not path.exists():
+        sys.exit(f"{style_dir}: no claims.yaml")
+    text = re.sub(r"^[ \t]*#.*$", "", path.read_text(), flags=re.M)
+    m = re.search(r"^id:\s*(.+)$", text, re.M)
+    claims = {"id": m.group(1).strip() if m else Path(style_dir).name}
     for key in ("owns", "probes", "guards", "banned"):
-        m = re.search(rf"^{key}:\s*\[(.*?)\]", text, re.M | re.S)
-        meta[key] = ([t.strip().strip('"\'') for t in m.group(1).split(",") if t.strip()]
-                     if m else [])
-    if "id" not in meta:
-        sys.exit(f"{path}: frontmatter needs an 'id'")
-    return meta
+        claims[key] = _list_key(text, key)
+    return claims
+
+
+def style_name(style_dir):
+    """The frontmatter `name` of style.md — what settings.json references."""
+    path = Path(style_dir) / "style.md"
+    if not path.exists():
+        sys.exit(f"{style_dir}: no style.md")
+    m = re.search(r"^---\n(.*?)\n---", path.read_text(), re.S)
+    n = re.search(r"^name:\s*(.+)$", m.group(1), re.M) if m else None
+    if not n:
+        sys.exit(f"{path}: frontmatter needs a 'name'")
+    return n.group(1).strip()
+
+
+def style_digest(style_dir):
+    """sha256 of the delivered file. Samples record it; --check enforces it."""
+    return hashlib.sha256((Path(style_dir) / "style.md").read_bytes()).hexdigest()
+
+
+def stale_samples(root, style_dir, sid, probes):
+    """Probes whose samples were captured under a different style.md."""
+    want = style_digest(style_dir)
+    failures = []
+    for probe in probes:
+        m = root / "samples" / probe / sid / "meta.json"
+        if not m.exists():
+            continue
+        got = json.loads(m.read_text()).get("style_sha256")
+        if got is None:
+            failures.append(
+                f"{probe}: samples predate style hashing (no style_sha256 in "
+                f"meta.json) — recapture to bind them to a style.md")
+        elif got != want:
+            failures.append(
+                f"{probe}: samples were captured under style.md {got[:12]}, but "
+                f"{style_dir}/style.md is now {want[:12]} — recapture")
+    return failures
 
 
 def banned_mean(sample_dir, terms):
@@ -209,68 +256,87 @@ def metric_mean(result, key):
     return s["rate"] if "rate" in s else s["mean"]
 
 
-def check_rule(rule_path):
-    root = Path(__file__).resolve().parent.parent
-    meta = rule_meta(rule_path)
-    rid = meta["id"]
-    print(f"\nrule {rid} ({meta.get('name', '?')})")
-    print(f"  owns:   {', '.join(meta['owns']) or '(nothing)'}")
-    print(f"  probes: {', '.join(meta['probes']) or '(none)'}")
-    print(f"  guards: {', '.join(meta['guards']) or '(none)'}")
+def provenance(root, sid, probes):
+    """What the compared samples were captured with, read off their meta.json."""
+    seen = {"model": set(), "cli_version": set(), "reps": set(), "captured": set()}
+    for probe in probes:
+        for cond in ("control", sid):
+            m = root / "samples" / probe / cond / "meta.json"
+            if not m.exists():
+                continue
+            d = json.loads(m.read_text())
+            for k in seen:
+                if d.get(k) is not None:
+                    seen[k].add(d[k])
+    out = {k: sorted(v) for k, v in seen.items()}
+    out["captured"] = ([out["captured"][0]] if len(set(out["captured"])) == 1
+                       else [out["captured"][0], out["captured"][-1]])
+    return out
 
-    failures = []
+
+def _rows(root, claims, sid):
+    """Score every declared probe and return (target rows, guard rows, failures)."""
+    targets, guards, failures = [], [], []
     measured = {}   # owned metric -> did any probe give it room to move?
 
-    for probe in meta["probes"]:
-        base_d, rule_d = root / "samples" / probe / "control", root / "samples" / probe / rid
-        if not rule_d.exists():
-            failures.append(f"{probe}: no samples for condition '{rid}' — capture it first")
+    for probe in claims["probes"]:
+        base_d = root / "samples" / probe / "control"
+        style_d = root / "samples" / probe / sid
+        if not style_d.exists():
+            failures.append(f"{probe}: no samples for condition '{sid}' — capture it first")
             continue
-        base, ruled = score_dir(base_d), score_dir(rule_d)
-        print(f"\n  {probe}")
-        for k in meta["owns"]:
+        base, styled = score_dir(base_d), score_dir(style_d)
+        for k in claims["owns"]:
             if k == "banned_terms":
-                b, r = banned_mean(base_d, meta["banned"]), banned_mean(rule_d, meta["banned"])
+                b = banned_mean(base_d, claims["banned"])
+                r = banned_mean(style_d, claims["banned"])
             else:
-                b, r = metric_mean(base, k), metric_mean(ruled, k)
+                b, r = metric_mean(base, k), metric_mean(styled, k)
+            row = {"probe": probe, "metric": k, "control": b, "style": r}
             if b is None or r is None:
-                print(f"    {k:<22} n/a")
-                continue
-            if b == 0 and k in LOWER_IS_BETTER:
-                print(f"    {k:<22} {b:>7.2f} -> {r:>7.2f}  (no headroom)")
+                row["status"] = "n/a"
+            elif b == 0 and k in LOWER_IS_BETTER:
+                row["status"] = "no headroom"
                 measured.setdefault(k, False)
-                continue
-            delta = r - b
-            better = delta < 0 if k in LOWER_IS_BETTER else delta > 0
-            pct = f"{100 * delta / b:+.0f}%" if b else "n/a"
-            measured[k] = True
-            print(f"    {k:<22} {b:>7.2f} -> {r:>7.2f}  ({pct})  "
-                  f"{'ok' if better else 'NO MOVEMENT'}")
-            if not better:
-                failures.append(f"{probe}: owned metric '{k}' did not improve ({pct})")
+            else:
+                delta = r - b
+                better = delta < 0 if k in LOWER_IS_BETTER else delta > 0
+                row["delta_pct"] = round(100 * delta / b, 1) if b else None
+                row["status"] = "ok" if better else "NO MOVEMENT"
+                measured[k] = True
+                if not better:
+                    failures.append(
+                        f"{probe}: owned metric '{k}' did not improve "
+                        f"({row['delta_pct']:+.0f}%)")
+            targets.append(row)
 
-    for probe in meta["guards"]:
-        base_d, rule_d = root / "samples" / probe / "control", root / "samples" / probe / rid
-        if not rule_d.exists():
-            failures.append(f"{probe}: no guard samples for condition '{rid}'")
+    for probe in claims["guards"]:
+        base_d = root / "samples" / probe / "control"
+        style_d = root / "samples" / probe / sid
+        if not style_d.exists():
+            failures.append(f"{probe}: no guard samples for condition '{sid}'")
             continue
-        base, ruled = score_dir(base_d), score_dir(rule_d)
-        print(f"\n  {probe} (guard)")
+        base, styled = score_dir(base_d), score_dir(style_d)
         # Word count is the wrong guard for an explanation: compressing without
         # dropping anything is a pass. Where a probe declares coverage markers,
         # substance is what gets guarded and length is reported for information.
         has_cov = metric_mean(base, "coverage_pct") is not None
         guarded = ("coverage_pct",) if has_cov else ("words",)
         for k in ("coverage_pct", "words", "sections") if has_cov else ("words", "sections"):
-            b, r = metric_mean(base, k), metric_mean(ruled, k)
+            b, r = metric_mean(base, k), metric_mean(styled, k)
             if not b:
                 continue
             delta = (r - b) / b
-            # Only a drop in coverage counts against a rule; more is fine.
+            # Only a drop in coverage counts against a style; more is fine.
             bad = (delta < -GUARD_TOLERANCE if k == "coverage_pct"
                    else abs(delta) > GUARD_TOLERANCE)
-            note = ("ok" if not bad else "COLLATERAL") if k in guarded else "(reported)"
-            print(f"    {k:<22} {b:>7.2f} -> {r:>7.2f}  ({100 * delta:+.0f}%)  {note}")
+            guards.append({
+                "probe": probe, "metric": k, "control": b, "style": r,
+                "delta_pct": round(100 * delta, 1),
+                "guarded": k in guarded,
+                "status": ("ok" if not bad else "COLLATERAL") if k in guarded
+                          else "reported",
+            })
             if bad and k in guarded:
                 failures.append(
                     f"{probe}: guard metric '{k}' moved {100 * delta:+.0f}% "
@@ -280,16 +346,120 @@ def check_rule(rule_path):
         if not ok:
             failures.append(
                 f"owned metric '{k}' has no headroom on any probe — the control "
-                f"already sits at zero, so the rule cannot be credited for it")
+                f"already sits at zero, so the style cannot be credited for it")
 
-    print()
+    return targets, guards, failures
+
+
+def _cell(v):
+    return "n/a" if v is None else f"{v:.2f}"
+
+
+def _delta(row):
+    d = row.get("delta_pct")
+    return "—" if d is None else f"{d:+.0f}%"
+
+
+def render_md(report):
+    """The style's own record, regenerated on every check."""
+    c, p = report["claims"], report["provenance"]
+    cond = report["style"]
+    when = " to ".join(p["captured"]) if len(p["captured"]) > 1 else p["captured"][0]
+    L = [
+        f"# {report['name']} — measured result",
+        "",
+        f"**{report['result']}.** Last changed {report['checked'][:10]}, "
+        f"against `style.md` {report['style_sha256'][:12]}. "
+        f"n={'/'.join(str(x) for x in p['reps'])} per cell, "
+        f"model {', '.join(p['model'])}, "
+        f"Claude Code {', '.join(p['cli_version'])}, captured {when}.",
+        "",
+        f"Regenerated by `bin/score.py --check {report['dir']}`.",
+        "",
+        "## Claims",
+        "",
+        f"- **owns** {', '.join(c['owns']) or '(nothing)'}",
+        f"- **probes** {', '.join(c['probes']) or '(none)'}",
+        f"- **guards** {', '.join(c['guards']) or '(none)'}",
+        "",
+        "## Targets",
+        "",
+        f"| probe | metric | control | {cond} | delta | |",
+        "|---|---|---|---|---|---|",
+    ]
+    for r in report["targets"]:
+        L.append(f"| {r['probe']} | `{r['metric']}` | {_cell(r['control'])} | "
+                 f"{_cell(r['style'])} | {_delta(r)} | {r['status']} |")
+    L += ["", "## Guards", "",
+          f"| probe | metric | control | {cond} | delta | |",
+          "|---|---|---|---|---|---|"]
+    for r in report["guards"]:
+        L.append(f"| {r['probe']} | `{r['metric']}` | {_cell(r['control'])} | "
+                 f"{_cell(r['style'])} | {_delta(r)} | {r['status']} |")
+    if report["failures"]:
+        L += ["", "## Failures", ""] + [f"- {f}" for f in report["failures"]]
+    return "\n".join(L) + "\n"
+
+
+def check_style(style_dir):
+    root = Path(__file__).resolve().parent.parent
+    style_dir = Path(style_dir)
+    claims = load_claims(style_dir)
+    sid = claims["id"]
+    name = style_name(style_dir)
+    probes = claims["probes"] + claims["guards"]
+
+    targets, guards, failures = _rows(root, claims, sid)
+    failures = stale_samples(root, style_dir, sid, probes) + failures
+    report = {
+        "style": sid,
+        "name": name,
+        "dir": str(style_dir).rstrip("/"),
+        "style_sha256": style_digest(style_dir),
+        "checked": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "result": "FAIL" if failures else "PASS",
+        "claims": claims,
+        "provenance": provenance(root, sid, probes),
+        "targets": targets,
+        "guards": guards,
+        "failures": failures,
+    }
+
+    print(f"\nstyle {sid} ({name})")
+    print(f"  owns:   {', '.join(claims['owns']) or '(nothing)'}")
+    print(f"  probes: {', '.join(claims['probes']) or '(none)'}")
+    print(f"  guards: {', '.join(claims['guards']) or '(none)'}")
+    for section, rows in (("", targets), (" (guard)", guards)):
+        last = None
+        for r in rows:
+            if r["probe"] != last:
+                print(f"\n  {r['probe']}{section}")
+                last = r["probe"]
+            print(f"    {r['metric']:<22} {_cell(r['control']):>7} -> "
+                  f"{_cell(r['style']):>7}  ({_delta(r)})  {r['status']}")
+
+    # `checked` is the date the result last moved. Rewriting it on every run
+    # would churn the diff and lie about when the numbers were established.
+    out = style_dir / "results.json"
+    if out.exists():
+        prev = json.loads(out.read_text())
+        if {k: v for k, v in prev.items() if k != "checked"} == \
+           {k: v for k, v in report.items() if k != "checked"}:
+            report["checked"] = prev["checked"]
+            print(f"\n  results unchanged since {report['checked'][:10]}")
+        else:
+            print(f"\n  results changed -> {style_dir}/results.md")
+    out.write_text(json.dumps(report, indent=2) + "\n")
+    (style_dir / "results.md").write_text(render_md(report))
+
     if failures:
-        print("FAIL")
+        print("\nFAIL")
         for f in failures:
             print(f"  - {f}")
         return 1
-    print("PASS  rule moved what it owns and left its guards alone")
+    print("\nPASS  style moved what it owns and left its guards alone")
     return 0
+
 
 if __name__ == "__main__":
     args = sys.argv[1:]
@@ -297,6 +467,6 @@ if __name__ == "__main__":
         sys.exit(__doc__)
     if args[0] == "--check":
         if len(args) != 2:
-            sys.exit("usage: score.py --check <rule.md>")
-        sys.exit(check_rule(args[1]))
+            sys.exit("usage: score.py --check <style-dir>")
+        sys.exit(check_style(args[1]))
     main(args)

@@ -1,0 +1,142 @@
+{
+  "style": "no-slop",
+  "name": "no-slop",
+  "dir": "styles/no-slop",
+  "style_sha256": "9754cb957b0428b54e54eb6f0d08832dc06d2433a9cfce9b818fd49cdbcd568d",
+  "checked": "2026-09-06T23:43:44Z",
+  "result": "PASS",
+  "claims": {
+    "id": "no-slop",
+    "owns": [
+      "words",
+      "prose_paragraphs",
+      "banned_terms"
+    ],
+    "probes": [
+      "storage-choice",
+      "ci-permission-denied"
+    ],
+    "guards": [
+      "tcp-congestion",
+      "cleanup-codebase"
+    ],
+    "banned": [
+      "load-bearing",
+      "worth noting",
+      "worth naming",
+      "worth knowing",
+      "honestly",
+      "frankly",
+      "genuine",
+      "genuinely",
+      "seam",
+      "seams",
+      "absorb the divergence",
+      "wearing",
+      "dressed as"
+    ]
+  },
+  "provenance": {
+    "model": [
+      "opus"
+    ],
+    "cli_version": [
+      "2.1.263"
+    ],
+    "reps": [
+      10
+    ],
+    "captured": [
+      "2026-09-06T14:46:20Z",
+      "2026-09-06T15:25:29Z"
+    ]
+  },
+  "targets": [
+    {
+      "probe": "storage-choice",
+      "metric": "words",
+      "control": 571,
+      "style": 333.3,
+      "delta_pct": -41.6,
+      "status": "ok"
+    },
+    {
+      "probe": "storage-choice",
+      "metric": "prose_paragraphs",
+      "control": 6.5,
+      "style": 4.4,
+      "delta_pct": -32.3,
+      "status": "ok"
+    },
+    {
+      "probe": "storage-choice",
+      "metric": "banned_terms",
+      "control": 1.7,
+      "style": 0.2,
+      "delta_pct": -88.2,
+      "status": "ok"
+    },
+    {
+      "probe": "ci-permission-denied",
+      "metric": "words",
+      "control": 344.2,
+      "style": 230.5,
+      "delta_pct": -33.0,
+      "status": "ok"
+    },
+    {
+      "probe": "ci-permission-denied",
+      "metric": "prose_paragraphs",
+      "control": 5.3,
+      "style": 4.9,
+      "delta_pct": -7.5,
+      "status": "ok"
+    },
+    {
+      "probe": "ci-permission-denied",
+      "metric": "banned_terms",
+      "control": 0,
+      "style": 0,
+      "status": "no headroom"
+    }
+  ],
+  "guards": [
+    {
+      "probe": "tcp-congestion",
+      "metric": "coverage_pct",
+      "control": 92.0,
+      "style": 94.0,
+      "delta_pct": 2.2,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "words",
+      "control": 932.7,
+      "style": 602.9,
+      "delta_pct": -35.4,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "coverage_pct",
+      "control": 96.7,
+      "style": 100.0,
+      "delta_pct": 3.4,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "words",
+      "control": 195.4,
+      "style": 132.3,
+      "delta_pct": -32.3,
+      "guarded": false,
+      "status": "reported"
+    }
+  ],
+  "failures": []
+}

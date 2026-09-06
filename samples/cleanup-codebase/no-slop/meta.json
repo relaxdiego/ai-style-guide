@@ -1,8 +1,9 @@
 {
   "probe": "cleanup-codebase",
-  "condition": "001",
-  "rule": "style/rules/001-no-slop.md",
+  "condition": "no-slop",
+  "style": "styles/no-slop",
   "delivery": "output-style",
+  "style_sha256": "9754cb957b0428b54e54eb6f0d08832dc06d2433a9cfce9b818fd49cdbcd568d",
   "model": "opus",
   "cli_version": "2.1.263",
   "captured": "2026-09-06T15:25:29Z",

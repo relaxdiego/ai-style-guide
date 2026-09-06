@@ -1,2 +1,6 @@
 # Local env
 .envrc.local
+
+# Editor swap files
+*.swp
+*.swo
