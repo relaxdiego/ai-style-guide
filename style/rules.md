@@ -24,6 +24,8 @@ because the stack it sits in cleared.
 | R10 | S4a, S4b, K4; and K1 as a cost | ablation by replacement, `20260903T231128Z-R10-scan-not-length` against the R04 arm: S4a 3.60 -> 4.35 band 0.43, S4b 1.36 -> 5.64 band 1.80, K4 0.18 -> 0.78 band 0.27, K1 5.94 -> 3.52 band 1.83. Six of twenty metrics cleared where chance yields one. The headings return where they were wanted and the tables overshoot the control |
 | R05 | S7 | ablation, `20260903T042140Z-ablate-R05`: removing it returns S7 to 16.67, the control rate exactly, clearing on both substrates |
 | R06 | S6 | marginal on R02, `20260903T035059Z-R03-R06`: 8.44 -> 0.97, band 1.04 |
+| R11 | nothing yet; C3 is the only metric that can see any part of it | **not measured.** Written 2026-09-06 and appended after R06. No run has contained it |
+| R12 | nothing yet; C1 is the only metric that can see any part of it | **not measured.** Written 2026-09-06 and appended after R11. No run has contained it |
 
 **Two estimators of S1 are in circulation, and a figure is meaningless without
 saying which.** The shipped detector averages a per-sample percentage and counts
@@ -253,6 +255,38 @@ all three of each.
 Retired IDs are never reused and never assembled, so historical run records stay
 unambiguous.
 
+## What R11 and R12 have yet to measure
+
+Both rules were written on 2026-09-06 at the copyeditor's request and appended
+after R06, so no existing rule changed position and the reading order of the
+shipped set is unchanged up to R06. Neither has been in a run.
+
+**Neither rule has a detector, and the two metrics that touch them are context
+rows.** C3 reads mean sentence length and C1 reads output length, so the most
+obvious consequence of each rule is visible. Nothing in the set sees the passive
+voice, a participle stack, a synonym substituted for a term already chosen, or a
+preamble. A null on C3 or C1 therefore does not say that the rule did nothing,
+and a detector for any of the four has to be justified against a quoted passage
+from a real sample rather than written a priori.
+
+**The predictions, on the record before the run.** Measured against
+`20260904T051132Z-R06-no-permit`, the current shipped arm, where C1 reads 562.78
+words, C2 53.68, C3 20.92, K3 34.08, S1 15.64 and S2 6.25.
+
+R11 drops C3 below 18 and clears its band, which has run at about 1.0. C2 stays
+inside its band, because R07 holds the paragraph together while R11 works inside
+the sentence. If C2 falls with C3, the two rules are fighting and the pair needs
+dividing rather than keeping. S2 is where R11 is most likely to cost something:
+splitting a long analytic sentence in two leaves the tail standing alone, which
+is what S2 counts.
+
+R12 drops C1, and K3 is where it is most likely to cost something. K3 is
+collateral, it is R07's, and it currently sits at 34.08 against a v2 control of
+27.72. A rule that forbids the preamble takes its words out of the opening
+paragraph first. K3 falling below the control is a loss the scorecard will
+report as a number going down, and it is the reading to check before either rule
+is accepted.
+
 ## R07 — Let a paragraph develop
 
 Carry a thought from claim through reasoning to consequence inside a single
@@ -327,3 +361,23 @@ Do not set words in bold inside a sentence to mark stress. Bold is a structural
 signal, used for a defined term or a label at the head of an entry, not a way to
 raise your voice mid-clause. Where a phrase needs weight, put it where the
 sentence already puts its weight, at the end of the clause.
+
+## R11 — Say one thing per sentence, and name who does it
+
+Write each sentence so that it carries a single idea, and let the next sentence
+carry the next one. Prefer the active voice and name the agent: "the installer
+removes the old binary", not "the old binary is removed". Keep the article and
+the relative pronoun that the grammar wants, rather than compressing them away.
+A stack of participles in front of a noun makes the reader hold three things
+before reaching the subject, so unpack it into clauses.
+
+Use one word for one meaning. Where a term has been chosen for a thing, keep
+using that term, because a synonym reached for on the third mention reads as a
+second thing.
+
+## R12 — Begin at the answer
+
+Do not open by restating the question, by announcing what you are about to do,
+or by summarising what you have just done. The reader has the question in front
+of them, and the work is already visible to them. A sentence that describes the
+answer instead of carrying part of it is the first thing to cut.

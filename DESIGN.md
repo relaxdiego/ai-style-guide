@@ -214,15 +214,26 @@ the redirect. A future session that drops the redirect because the flag is "the
 only thing" would put the treatment into every arm and the comparisons would
 still look healthy.
 
-`harness/check_cleanroom.py` holds the test, and the test currently proves
-nothing: it plants its canary in the real `~/.claude/CLAUDE.md`, which the
-redirect has already made unreadable, so both its arms come back silent and its
-own positive control refuses the result. `run.py` still calls the free static
-check before spending anything and exits 78 if the flag has gone, but that check
-is a string search over `cleanroom.sh` and not a proof that the flag still does
-what it did. Issue #14 carries the fix. No run to date is contaminated by either
-route: every manifest carries the flag in its argv and lists a scratch config dir
-with no `CLAUDE.md` in it.
+`harness/check_cleanroom.py` holds the test, and it now probes one route per
+mechanism, each with its own positive control planted in the same file it is
+protecting:
+
+| route | canary planted in | clean-room arm | positive control |
+|---|---|---|---|
+| user memory | real `~/.claude/CLAUDE.md` | must stay silent | no redirect, no flags |
+| project memory | `<repo>/CLAUDE.md` | must stay silent | redirect, no flags |
+
+A canary that cannot be read anywhere now fails the control rather than passing
+as a clean result, which is what the earlier version did: it planted in the real
+`~/.claude/CLAUDE.md` and then ran both arms with the redirect in place, so both
+came back silent. Run green on 2026-09-06 against CLI 2.1.263 — not the 2.1.259
+the frozen arms were measured on, so it is evidence about the mechanisms and not
+a re-measurement of an arm. `run.py` also calls the free static check before
+spending anything and exits 78 if the flag has gone; that check is a string
+search over `cleanroom.sh` plus a leftover-canary sweep, not a proof that the
+flag still does what it did. No run to date is contaminated by either route:
+every manifest carries the flag in its argv and lists a scratch config dir with
+no `CLAUDE.md` in it.
 
 **Upgrade path:** an `ANTHROPIC_API_KEY` enables `--bare`, which skips hooks,
 LSP, plugin sync, auto-memory, keychain reads, and CLAUDE.md discovery at the
