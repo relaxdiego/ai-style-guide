@@ -1,0 +1,45 @@
+name: Release the style guide
+
+# The guide is built from style/rules.md at the tagged commit and attached to
+# the release. It is never committed: a second copy is a second thing to drift,
+# and a CLAUDE.md at the repo root would sit in the memory-discovery chain of
+# every clean-room sample. See HARNESS.md.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      # package_style.py refuses any path inside the repo, so the guide is
+      # built into the runner temp directory. It exits non-zero if the guide
+      # leaks project vocabulary, which fails the release.
+      - name: Build the guide
+        run: python3 harness/package_style.py --out "$RUNNER_TEMP/CLAUDE.md"
+
+      - name: Compose the release notes
+        run: python3 .github/release_notes.py "$RUNNER_TEMP/CLAUDE.md" "$RUNNER_TEMP/notes.md"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "$RUNNER_TEMP/CLAUDE.md" \
+            --title "Prose style guide $GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --verify-tag
