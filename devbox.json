@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.18.0/.schema/devbox.schema.json",
+  "packages": [],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "baseline": [
+        "python3 harness/run.py --arm control --substrates a,b --out baseline/$(date -u +%Y%m%dT%H%M%SZ) --label 'frozen control'"
+      ],
+      "smoke": [
+        "python3 harness/run.py --arm control --substrates b --runs-b 1 --only c01 --out /tmp/aiw-smoke --label smoke"
+      ]
+    }
+  }
+}
