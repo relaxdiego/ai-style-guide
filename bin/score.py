@@ -25,15 +25,21 @@ TAIL_QUESTION = 0.15   # final fraction of words searched for a trailing questio
 TAIL_RESTATE = 0.20    # final fraction searched for a restated verdict
 
 
-def load_probe(probe_id):
-    """Return the probe's verdict tokens, or [] if it has none."""
-    path = Path(__file__).resolve().parent.parent / "prompts" / f"{probe_id}.md"
-    if not path.exists():
-        return []
-    m = re.search(r"^verdict_tokens:\s*\[(.*?)\]", path.read_text(), re.M)
+def _list_key(text, key):
+    """Parse a possibly multi-line inline YAML list from frontmatter."""
+    m = re.search(rf"^{key}:\s*\[(.*?)\]", text, re.M | re.S)
     if not m or not m.group(1).strip():
         return []
-    return [t.strip().strip('"\'') for t in m.group(1).split(",") if t.strip()]
+    return [v.strip().strip('"\'') for v in m.group(1).split(",") if v.strip()]
+
+
+def load_probe(probe_id):
+    """Return (verdict tokens, coverage markers) for a probe."""
+    path = Path(__file__).resolve().parent.parent / "prompts" / f"{probe_id}.md"
+    if not path.exists():
+        return [], []
+    text = path.read_text()
+    return _list_key(text, "verdict_tokens"), _list_key(text, "coverage")
 
 
 def first_token_pct(text, words, tokens):
@@ -53,7 +59,7 @@ def first_token_pct(text, words, tokens):
     return round(100 * len(text[:best].split()) / max(len(words), 1), 1)
 
 
-def score_file(path, tokens):
+def score_file(path, tokens, coverage=()):
     text = path.read_text()
     words = text.split()
     n = len(words)
@@ -64,6 +70,9 @@ def score_file(path, tokens):
     blocks = [b for b in re.split(r"\n\s*\n", text.strip()) if b.strip()]
     prose = sum(1 for b in blocks
                 if not re.match(r"^\s*([-*+]|\d+\.|\||#|```)", b))
+
+    cov = (round(100 * sum(bool(re.search(c, text, re.I)) for c in coverage)
+                 / len(coverage), 1) if coverage else None)
 
     return {
         "file": path.name,
@@ -79,17 +88,19 @@ def score_file(path, tokens):
         "sections": len(re.findall(r"^(?:#{1,4} |\*\*[^*\n]+\*\*)", text, re.M)),
         "code_fence_lines": len(re.findall(r"^```", text, re.M)) // 2,
         "em_dashes_per_100w": round(100 * text.count("—") / max(n, 1), 2),
+        "coverage_pct": cov,
     }
 
 
 NUMERIC = ["words", "first_verdict_pct", "elaboration_ratio", "prose_paragraphs",
-           "bullets", "sections", "code_fence_lines", "em_dashes_per_100w"]
+           "bullets", "sections", "code_fence_lines", "em_dashes_per_100w",
+           "coverage_pct"]
 BOOLEAN = ["trailing_question", "restates_verdict"]
 
 # Metrics a rule is expected to drive down. first_verdict_pct is deliberately
 # absent: landing the answer earlier is good, but so is a probe with no verdict.
 LOWER_IS_BETTER = {"words", "elaboration_ratio", "prose_paragraphs", "sections",
-                   "trailing_question", "restates_verdict"}
+                   "trailing_question", "restates_verdict", "banned_terms"}
 
 # A guard probe may drift this much before it counts as collateral damage.
 GUARD_TOLERANCE = 0.15
@@ -113,11 +124,11 @@ def summarise(rows):
 def score_dir(d):
     d = Path(d)
     probe_id = d.parent.name
-    tokens = load_probe(probe_id)
+    tokens, coverage = load_probe(probe_id)
     files = sorted(f for f in d.glob("r*.md"))
     if not files:
         sys.exit(f"no samples in {d}")
-    rows = [score_file(f, tokens) for f in files]
+    rows = [score_file(f, tokens, coverage) for f in files]
     result = {
         "probe": probe_id,
         "condition": d.name,
@@ -171,13 +182,24 @@ def rule_meta(path):
         m = re.search(rf"^{key}:\s*(.+)$", text, re.M)
         if m:
             meta[key] = m.group(1).strip()
-    for key in ("owns", "probes", "guards"):
-        m = re.search(rf"^{key}:\s*\[(.*?)\]", text, re.M)
+    for key in ("owns", "probes", "guards", "banned"):
+        m = re.search(rf"^{key}:\s*\[(.*?)\]", text, re.M | re.S)
         meta[key] = ([t.strip().strip('"\'') for t in m.group(1).split(",") if t.strip()]
                      if m else [])
     if "id" not in meta:
         sys.exit(f"{path}: frontmatter needs an 'id'")
     return meta
+
+
+def banned_mean(sample_dir, terms):
+    """Mean banned-term hits per sample. Word-bounded, so 'genuine' does not
+    also match every 'genuinely'."""
+    pats = [re.compile(rf"\b{re.escape(x)}\b", re.I) for x in terms]
+    files = sorted(Path(sample_dir).glob("r*.md"))
+    if not files:
+        return None
+    return round(statistics.mean(
+        sum(len(p.findall(f.read_text())) for p in pats) for f in files), 2)
 
 
 def metric_mean(result, key):
@@ -197,6 +219,7 @@ def check_rule(rule_path):
     print(f"  guards: {', '.join(meta['guards']) or '(none)'}")
 
     failures = []
+    measured = {}   # owned metric -> did any probe give it room to move?
 
     for probe in meta["probes"]:
         base_d, rule_d = root / "samples" / probe / "control", root / "samples" / probe / rid
@@ -206,13 +229,21 @@ def check_rule(rule_path):
         base, ruled = score_dir(base_d), score_dir(rule_d)
         print(f"\n  {probe}")
         for k in meta["owns"]:
-            b, r = metric_mean(base, k), metric_mean(ruled, k)
+            if k == "banned_terms":
+                b, r = banned_mean(base_d, meta["banned"]), banned_mean(rule_d, meta["banned"])
+            else:
+                b, r = metric_mean(base, k), metric_mean(ruled, k)
             if b is None or r is None:
                 print(f"    {k:<22} n/a")
+                continue
+            if b == 0 and k in LOWER_IS_BETTER:
+                print(f"    {k:<22} {b:>7.2f} -> {r:>7.2f}  (no headroom)")
+                measured.setdefault(k, False)
                 continue
             delta = r - b
             better = delta < 0 if k in LOWER_IS_BETTER else delta > 0
             pct = f"{100 * delta / b:+.0f}%" if b else "n/a"
+            measured[k] = True
             print(f"    {k:<22} {b:>7.2f} -> {r:>7.2f}  ({pct})  "
                   f"{'ok' if better else 'NO MOVEMENT'}")
             if not better:
@@ -225,17 +256,31 @@ def check_rule(rule_path):
             continue
         base, ruled = score_dir(base_d), score_dir(rule_d)
         print(f"\n  {probe} (guard)")
-        for k in ("words", "sections"):
+        # Word count is the wrong guard for an explanation: compressing without
+        # dropping anything is a pass. Where a probe declares coverage markers,
+        # substance is what gets guarded and length is reported for information.
+        has_cov = metric_mean(base, "coverage_pct") is not None
+        guarded = ("coverage_pct",) if has_cov else ("words",)
+        for k in ("coverage_pct", "words", "sections") if has_cov else ("words", "sections"):
             b, r = metric_mean(base, k), metric_mean(ruled, k)
             if not b:
                 continue
-            drift = abs(r - b) / b
-            print(f"    {k:<22} {b:>7.2f} -> {r:>7.2f}  ({100 * (r - b) / b:+.0f}%)  "
-                  f"{'ok' if drift <= GUARD_TOLERANCE else 'COLLATERAL'}")
-            if drift > GUARD_TOLERANCE:
+            delta = (r - b) / b
+            # Only a drop in coverage counts against a rule; more is fine.
+            bad = (delta < -GUARD_TOLERANCE if k == "coverage_pct"
+                   else abs(delta) > GUARD_TOLERANCE)
+            note = ("ok" if not bad else "COLLATERAL") if k in guarded else "(reported)"
+            print(f"    {k:<22} {b:>7.2f} -> {r:>7.2f}  ({100 * delta:+.0f}%)  {note}")
+            if bad and k in guarded:
                 failures.append(
-                    f"{probe}: guard metric '{k}' moved {100 * (r - b) / b:+.0f}% "
+                    f"{probe}: guard metric '{k}' moved {100 * delta:+.0f}% "
                     f"(tolerance {int(GUARD_TOLERANCE * 100)}%)")
+
+    for k, ok in measured.items():
+        if not ok:
+            failures.append(
+                f"owned metric '{k}' has no headroom on any probe — the control "
+                f"already sits at zero, so the rule cannot be credited for it")
 
     print()
     if failures:

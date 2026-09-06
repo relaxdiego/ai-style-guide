@@ -12,7 +12,7 @@ import re
 import sys
 from pathlib import Path
 
-BOOKKEEPING = {"id", "owns", "probes", "guards"}
+BOOKKEEPING = {"id", "owns", "probes", "guards", "banned"}
 
 
 def split_frontmatter(text):

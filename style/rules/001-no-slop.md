@@ -1,6 +1,9 @@
 ---
 id: 001
-owns:    [words, elaboration_ratio, restates_verdict]
+owns:    [words, prose_paragraphs, banned_terms]
+banned:  ["load-bearing", "worth noting", "worth naming", "worth knowing",
+  "honestly", "frankly", "genuine", "genuinely", "seam", "seams",
+  "absorb the divergence", "wearing", "dressed as"]
 probes:  [storage-choice, ci-permission-denied]
 guards:  [tcp-congestion, cleanup-codebase]
 name: no-slop

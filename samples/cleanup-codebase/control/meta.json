@@ -5,8 +5,9 @@
   "delivery": null,
   "model": "opus",
   "cli_version": "2.1.263",
-  "captured": "2026-09-06T14:46:50Z",
+  "captured": "2026-09-06T15:24:56Z",
   "reps": 10,
-  "flags": "--tools '' --strict-mcp-config --setting-sources project --no-session-persistence",
+  "tools": "Read,Glob,Grep",
+  "flags": "--tools 'Read,Glob,Grep' --strict-mcp-config --setting-sources project --no-session-persistence --permission-mode bypassPermissions",
   "cwd": "empty non-git tmpdir with synthesized .claude/"
 }

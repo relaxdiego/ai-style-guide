@@ -5,21 +5,21 @@
   "n": 10,
   "summary": {
     "words": {
-      "mean": 39.4,
-      "min": 7,
-      "max": 150
+      "mean": 132.3,
+      "min": 107,
+      "max": 175
     },
     "first_verdict_pct": null,
     "elaboration_ratio": null,
     "prose_paragraphs": {
-      "mean": 2.2,
-      "min": 1,
+      "mean": 2.9,
+      "min": 2,
       "max": 3
     },
     "bullets": {
-      "mean": 0.5,
-      "min": 0,
-      "max": 5
+      "mean": 3.8,
+      "min": 3,
+      "max": 4
     },
     "sections": {
       "mean": 0,
@@ -32,9 +32,14 @@
       "max": 0
     },
     "em_dashes_per_100w": {
-      "mean": 0.6,
-      "min": 0.0,
-      "max": 3.33
+      "mean": 1.7,
+      "min": 0.6,
+      "max": 3.6
+    },
+    "coverage_pct": {
+      "mean": 100.0,
+      "min": 100.0,
+      "max": 100.0
     },
     "trailing_question": {
       "hits": 0,
@@ -50,133 +55,143 @@
   "samples": [
     {
       "file": "r01.md",
-      "words": 7,
+      "words": 107,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
-      "prose_paragraphs": 1,
-      "bullets": 0,
+      "prose_paragraphs": 3,
+      "bullets": 3,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.93,
+      "coverage_pct": 100.0
     },
     {
       "file": "r02.md",
-      "words": 39,
+      "words": 113,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
       "prose_paragraphs": 3,
-      "bullets": 0,
+      "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 1.77,
+      "coverage_pct": 100.0
     },
     {
       "file": "r03.md",
-      "words": 42,
+      "words": 111,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
       "prose_paragraphs": 3,
-      "bullets": 0,
+      "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.9,
+      "coverage_pct": 100.0
     },
     {
       "file": "r04.md",
-      "words": 51,
+      "words": 139,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
       "prose_paragraphs": 3,
-      "bullets": 0,
+      "bullets": 3,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.72,
+      "coverage_pct": 100.0
     },
     {
       "file": "r05.md",
-      "words": 11,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 2,
-      "bullets": 0,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
-    },
-    {
-      "file": "r06.md",
-      "words": 150,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 2,
-      "bullets": 5,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 3.33
-    },
-    {
-      "file": "r07.md",
-      "words": 32,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 2,
-      "bullets": 0,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 3.12
-    },
-    {
-      "file": "r08.md",
-      "words": 7,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 1,
-      "bullets": 0,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
-    },
-    {
-      "file": "r09.md",
-      "words": 21,
-      "first_verdict_pct": null,
-      "elaboration_ratio": null,
-      "trailing_question": false,
-      "restates_verdict": false,
-      "prose_paragraphs": 2,
-      "bullets": 0,
-      "sections": 0,
-      "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
-    },
-    {
-      "file": "r10.md",
-      "words": 34,
+      "words": 167,
       "first_verdict_pct": null,
       "elaboration_ratio": null,
       "trailing_question": false,
       "restates_verdict": false,
       "prose_paragraphs": 3,
-      "bullets": 0,
+      "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.6,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r06.md",
+      "words": 175,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 2.86,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r07.md",
+      "words": 157,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 2.55,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r08.md",
+      "words": 111,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 0.9,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r09.md",
+      "words": 132,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 3,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 2.27,
+      "coverage_pct": 100.0
+    },
+    {
+      "file": "r10.md",
+      "words": 111,
+      "first_verdict_pct": null,
+      "elaboration_ratio": null,
+      "trailing_question": false,
+      "restates_verdict": false,
+      "prose_paragraphs": 2,
+      "bullets": 4,
+      "sections": 0,
+      "code_fence_lines": 0,
+      "em_dashes_per_100w": 3.6,
+      "coverage_pct": 100.0
     }
   ]
 }

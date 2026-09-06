@@ -30,6 +30,13 @@ mkdir -p "$OUT"
 # Body of a frontmattered file = everything after the closing fence.
 body() { awk 'f>1{print} /^---$/{f++}' "$1"; }
 
+# Probes that read as a task make the model reach for tools even when it has
+# none, and it emits hallucinated tool-call markup instead of prose. Such a
+# probe declares read-only tools and gets an empty sandbox to find nothing in.
+export TOOLS="$(awk -F': *' '/^tools:/{print $2; exit}' "$PROBE")"
+export PERM_MODE=""
+[ -n "$TOOLS" ] && PERM_MODE="bypassPermissions"
+
 export PROMPT="$(body "$PROBE")"
 [ -n "$PROMPT" ] || { echo "empty prompt body in $PROBE" >&2; exit 1; }
 
@@ -53,14 +60,10 @@ echo "$PROBE_ID / $CONDITION  ($REPS reps, model=$MODEL${RULE:+, rule=$RULE})"
 seq 1 "$REPS" | xargs -P "$CONCURRENCY" -I{} bash -c '
   set -euo pipefail
   printf -v out "%s/r%02d.md" "$OUT" "$1"
-  ( cd "$RUN_DIR" && claude -p "$PROMPT" \
-      --model "$MODEL" \
-      --tools "" \
-      --strict-mcp-config \
-      --setting-sources project \
-      --no-session-persistence \
-      --output-format text \
-  ) > "$out" 2>/dev/null < /dev/null
+  args=(-p "$PROMPT" --model "$MODEL" --tools "$TOOLS" --strict-mcp-config
+        --setting-sources project --no-session-persistence --output-format text)
+  [ -n "$PERM_MODE" ] && args+=(--permission-mode "$PERM_MODE")
+  ( cd "$RUN_DIR" && claude "${args[@]}" ) > "$out" 2>/dev/null < /dev/null
   printf "  r%02d: %s words\n" "$1" "$(wc -w < "$out")"
 ' _ {}
 
@@ -74,7 +77,8 @@ cat > "$OUT/meta.json" <<META
   "cli_version": "$(claude --version 2>/dev/null | awk '{print $1}')",
   "captured": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "reps": $REPS,
-  "flags": "--tools '' --strict-mcp-config --setting-sources project --no-session-persistence",
+  "tools": "${TOOLS:-none}",
+  "flags": "--tools '$TOOLS' --strict-mcp-config --setting-sources project --no-session-persistence${PERM_MODE:+ --permission-mode $PERM_MODE}",
   "cwd": "empty non-git tmpdir with synthesized .claude/"
 }
 META

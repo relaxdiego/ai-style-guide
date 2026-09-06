@@ -38,6 +38,7 @@ Removing its tools did.
 | Flag | Removes |
 | --- | --- |
 | `--tools ""` | the model's ability to inspect anything — and with it the Skill tool, so no skills or plugins load |
+| per-probe `tools:` | opt back in to read-only tools where a probe needs them (see below) |
 | `--setting-sources project` | user and local settings; only the synthesized run-dir `.claude/` applies |
 | `--strict-mcp-config` | MCP servers |
 | empty non-git cwd | git status and file listings in the system prompt |
@@ -74,6 +75,20 @@ plugins and commands, the model answers NONE either way, because `--tools ""`
 already removes the Skill tool. There is no user-level `CLAUDE.md`, and
 `--setting-sources project` keeps user settings out.
 
+### When a probe needs tools
+
+Removing tools is right for prose probes and wrong for anything that reads as a
+task. Claude Code still tells the model it is an agent, so a task-shaped prompt
+makes it reach for tools it does not have and emit hallucinated tool-call markup
+instead of prose — 5 of 10 samples on the first `cleanup-codebase` probe.
+Rewording does not fix it; three differently-phrased underspecified prompts all
+did the same thing. The framing causes it, not the wording.
+
+A probe can therefore declare `tools: Read,Glob,Grep` in its frontmatter. It
+still runs in the empty sandbox, so the model looks, finds nothing, and asks the
+question the probe exists to measure. Both conditions see the same empty sandbox,
+so the comparison holds; the sandbox does get mentioned in the prose, symmetrically.
+
 ### Delivering a rule
 
 A rule is shipped as an **output style**, the way a user would really apply one —
@@ -98,10 +113,19 @@ text in the abstract.
 | `sections` | structural segmentation of a single point | 0 |
 | `trailing_question` | a clarifying question asked *after* committing | 0 of 40 |
 | `em_dashes_per_100w` | texture | ~0.1 |
+| `coverage_pct` | share of a probe's declared concepts still present | 100% |
 
-`elaboration_ratio` is the primary score. On `storage-choice` the verdict lands
-in the first word and 99.9% of the response follows it — 571 words on average of
-elaboration nobody asked for. That, not formatting, is the wall.
+`words` and `prose_paragraphs` are the scores that carry weight. On
+`storage-choice` the control runs 571 words and 6.5 prose paragraphs, and the
+verdict lands in the first word — so the wall is what follows the answer, not
+where the answer sits.
+
+`elaboration_ratio` and `restates_verdict` are retained but are **not usable as
+rule targets on these probes**. The control already answers immediately, so
+elaboration_ratio sits at 99.9% with no headroom; and `restates_verdict` fires on
+any late mention of a verdict token, which on a SQLite-vs-Postgres probe is every
+substantive answer. Both were tried as owned metrics for rule 001 and measured
+nothing.
 
 `sections`, `trailing_question` and `em_dashes_per_100w` sit at the floor in the
 control, so no rule can improve them. They are retained as **guards**: a rule
@@ -132,11 +156,25 @@ guards:  [tcp-congestion, cleanup-codebase]
 ---
 ```
 
-`bin/score.py --check style/rules/001-*.md` then verifies both halves of that
-claim: the owned metrics improved on the listed probes, and the guard probes
-drifted less than 15%. A rule that wins its own metrics by damaging a guard
-fails. Numbering also makes it visible when a later rule is poaching an earlier
-rule's metrics rather than owning new slop.
+A rule that bans specific words also lists them under `banned:`, and can then own
+the synthetic metric `banned_terms` — mean word-bounded hits per sample.
+
+`bin/score.py --check style/rules/001-*.md` verifies both halves of the claim:
+the owned metrics improved on the listed probes, and the guard probes held.
+Numbering makes it visible when a later rule is poaching an earlier rule's
+metrics rather than owning new slop.
+
+An owned metric whose control value is already zero is reported as having no
+headroom rather than counted as a failure — but if no probe gives it room to
+move, the rule cannot be credited for it and the check fails. `banned_terms` is
+zero on `ci-permission-denied` and 1.70 on `storage-choice`, so it is measurable
+there and only there.
+
+Guards are checked on substance where a probe declares `coverage:` markers, and
+on word count otherwise. Compressing an explanation without dropping any of its
+concepts is a pass, not collateral damage — rule 001 cut `tcp-congestion` by 35%
+while coverage held at 10/10 markers, and guarding on length alone would have
+failed it wrongly.
 
 ## Guarding against the metric
 

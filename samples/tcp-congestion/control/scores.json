@@ -36,6 +36,11 @@
       "min": 0.0,
       "max": 0.0
     },
+    "coverage_pct": {
+      "mean": 92.0,
+      "min": 80.0,
+      "max": 100.0
+    },
     "trailing_question": {
       "hits": 0,
       "of": 10,
@@ -59,7 +64,8 @@
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 90.0
     },
     {
       "file": "r02.md",
@@ -72,7 +78,8 @@
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 100.0
     },
     {
       "file": "r03.md",
@@ -85,7 +92,8 @@
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 100.0
     },
     {
       "file": "r04.md",
@@ -98,7 +106,8 @@
       "bullets": 0,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 100.0
     },
     {
       "file": "r05.md",
@@ -111,7 +120,8 @@
       "bullets": 0,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 90.0
     },
     {
       "file": "r06.md",
@@ -124,7 +134,8 @@
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 80.0
     },
     {
       "file": "r07.md",
@@ -137,7 +148,8 @@
       "bullets": 3,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 80.0
     },
     {
       "file": "r08.md",
@@ -150,7 +162,8 @@
       "bullets": 0,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 100.0
     },
     {
       "file": "r09.md",
@@ -163,7 +176,8 @@
       "bullets": 4,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 90.0
     },
     {
       "file": "r10.md",
@@ -176,7 +190,8 @@
       "bullets": 0,
       "sections": 0,
       "code_fence_lines": 0,
-      "em_dashes_per_100w": 0.0
+      "em_dashes_per_100w": 0.0,
+      "coverage_pct": 90.0
     }
   ]
 }
