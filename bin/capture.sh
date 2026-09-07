@@ -46,7 +46,6 @@ export PROMPT="$(body "$PROBE")"
 # the measured delta is the style as delivered rather than the scaffold.
 export RUN_DIR="$(mktemp -d)"
 mkdir -p "$RUN_DIR/.claude/output-styles"
-trap 'rm -rf "$RUN_DIR"' EXIT
 
 if [ -n "$STYLE_DIR" ]; then
   SRC="$ROOT/${STYLE_DIR#"$ROOT/"}/style.md"
@@ -68,15 +67,32 @@ fi
 
 echo "$PROBE_ID / $CONDITION  ($REPS reps, model=$MODEL${STYLE_DIR:+, style=$STYLE_DIR})"
 
+# MODEL is an alias ("opus"), which resolves to a different snapshot over time.
+# Each rep is captured as JSON so the id the request actually ran on is read off
+# modelUsage and recorded; the sample file is still the plain text of .result.
+export IDS="$(mktemp -d)"
+trap 'rm -rf "$RUN_DIR" "$IDS"' EXIT
+
 seq 1 "$REPS" | xargs -P "$CONCURRENCY" -I{} bash -c '
   set -euo pipefail
   printf -v out "%s/r%02d.md" "$OUT" "$1"
   args=(-p "$PROMPT" --model "$MODEL" --tools "$TOOLS" --strict-mcp-config
-        --setting-sources project --no-session-persistence --output-format text)
+        --setting-sources project --no-session-persistence --output-format json)
   [ -n "$PERM_MODE" ] && args+=(--permission-mode "$PERM_MODE")
-  ( cd "$RUN_DIR" && claude "${args[@]}" ) > "$out" 2>/dev/null < /dev/null
-  printf "  r%02d: %s words\n" "$1" "$(wc -w < "$out")"
+  raw="$(cd "$RUN_DIR" && claude "${args[@]}" 2>/dev/null < /dev/null)"
+  if [ "$(jq -r ".is_error" <<< "$raw")" != "false" ]; then
+    echo "  r$1: API error, see $OUT" >&2
+  fi
+  jq -r ".result" <<< "$raw" > "$out"
+  printf -v idf "%s/r%02d" "$IDS" "$1"
+  jq -r ".modelUsage | keys[]" <<< "$raw" > "$idf"
+  printf "  r%02d: %s words (%s)\n" "$1" "$(wc -w < "$out")" "$(tr "\n" "," < "$idf" | sed "s/,$//")"
 ' _ {}
+
+# One id in the normal case; more only if the alias moved mid-run, and then the
+# provenance says so rather than hiding it behind the alias.
+MODEL_IDS="$(cat "$IDS"/* 2>/dev/null | sort -u | jq -R . | jq -sc .)"
+[ "$MODEL_IDS" = "[]" ] && MODEL_IDS="null"
 
 cat > "$OUT/meta.json" <<META
 {
@@ -86,6 +102,7 @@ cat > "$OUT/meta.json" <<META
   "delivery": $( [ -n "$STYLE_DIR" ] && printf '"output-style"' || printf 'null' ),
   "style_sha256": $( [ -n "$STYLE_SHA" ] && printf '"%s"' "$STYLE_SHA" || printf 'null' ),
   "model": "$MODEL",
+  "model_ids": $MODEL_IDS,
   "cli_version": "$(claude --version 2>/dev/null | awk '{print $1}')",
   "captured": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "reps": $REPS,
