@@ -1,31 +1,14 @@
 # ai-style-guide
 
-An experiment harness that measures whether a written style rule, delivered to Claude Code as an [output style](https://code.claude.com/docs/en/output-styles), actually changes the model's output, and whether it damages anything else in the process.
-
-## The styles
-
-One style, versioned by date. Each version is a directory under `styles/`, carries its own `claims.yaml`, and ships the record that justifies it. A version's `style.md` frontmatter carries a `version` field, so a copy installed in `~/.claude/output-styles/` can be traced back to the directory it came from.
-
-| version | targets | measured against | verdict |
-|---|---|---|---|
-| [`no-slop-2026.09.07`](styles/no-slop-2026.09.07) | em dashes, invented shorthand | `no-slop-2026.09.06` | [FAIL, one row](styles/no-slop-2026.09.07/results.md) |
-| [`no-slop-2026.09.06`](styles/no-slop-2026.09.06) | length, paragraph count, banned terms | control | [PASS](styles/no-slop-2026.09.06/results.md) |
-
-`no-slop-2026.09.07` is the current one. It keeps everything the previous version does and adds two rules, and its own text has none of the em dashes the previous version's did. It ships FAIL on one row on purpose; the reason is under [the contract](#the-contract-a-style-signs). To install it:
-
-```
-cp styles/no-slop-2026.09.07/style.md ~/.claude/output-styles/no-slop.md
-```
-
-Both frontmatters name the style `no-slop`, so an installed copy replaces the previous one rather than sitting beside it. Check which one is installed with `grep '^version:' ~/.claude/output-styles/no-slop.md`; a copy with no `version` line predates the field and is `2026.09.06` or earlier.
+An experimental harness that measures whether [output style](https://code.claude.com/docs/en/output-styles) actually changes the model's output, and whether it damages anything else in the process. Each style is versioned under `styles/**/style.md`
 
 ## Testing a style yourself
 
-Ask Claude Code to run the blind read for you:
+Ask Claude Code to run the blind read for you. Example:
 
 > Build a blind read for `styles/no-slop-2026.09.07` and publish it, then score my picks.
 
-It will run `bin/blind.py build`, publish the generated `page.html` as an Artifact, and hand you a link. Read the pairs, pick A, B or no preference on each, and hit **Reveal the key** once all of them are judged. Copy the picks JSON off the reveal screen and paste it back into the session; Claude Code runs `bin/blind.py record` and writes the result to `styles/<name>/blind-read.md`.
+It will publish an artifact, and hand you a link. Read the pairs, pick A, B or no preference on each, and hit **Reveal the key** once all of them are judged. Copy the picks JSON off the reveal screen and paste it back into the session; Claude Code runs `bin/blind.py record` and writes the result to `styles/<name>/blind-read.md`.
 
 ## How the experiment is set up
 
