@@ -1,0 +1,173 @@
+{
+  "style": "no-slop-2026.09.07",
+  "baseline": "no-slop-2026.09.06",
+  "name": "no-slop",
+  "dir": "styles/no-slop-2026.09.07",
+  "style_sha256": "c5e840c2e4d7293c33408e2a51469041e7ac183d45762f90fdf6f1505ec4a5b9",
+  "style_version": "2026.09.07",
+  "checked": "2026-09-07T04:16:43Z",
+  "result": "FAIL",
+  "claims": {
+    "id": "no-slop-2026.09.07",
+    "baseline": "no-slop-2026.09.06",
+    "owns": [
+      "em_dashes_per_100w",
+      "banned_terms"
+    ],
+    "probes": [
+      "own-output-critique",
+      "storage-choice"
+    ],
+    "guards": [
+      "tcp-congestion",
+      "cleanup-codebase",
+      "own-output-critique"
+    ],
+    "banned": [
+      "load-bearing",
+      "worth noting",
+      "worth naming",
+      "worth knowing",
+      "honestly",
+      "frankly",
+      "genuine",
+      "genuinely",
+      "seam",
+      "seams",
+      "absorb the divergence",
+      "wearing",
+      "dressed as",
+      "texture",
+      "grain",
+      "joints",
+      "gradient",
+      "topography",
+      "contour",
+      "residue",
+      "fossil",
+      "archaeology",
+      "axis",
+      "axes"
+    ]
+  },
+  "provenance": {
+    "model": [
+      "opus"
+    ],
+    "model_ids": [
+      "claude-opus-5"
+    ],
+    "cli_version": [
+      "2.1.263"
+    ],
+    "reps": [
+      10
+    ],
+    "captured": [
+      "2026-09-06T15:12:35Z",
+      "2026-09-07T04:14:19Z"
+    ]
+  },
+  "targets": [
+    {
+      "probe": "own-output-critique",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.2,
+      "style": 0.0,
+      "delta_pct": -100.0,
+      "status": "ok"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "banned_terms",
+      "baseline": 1.5,
+      "style": 0.4,
+      "delta_pct": -73.3,
+      "status": "ok"
+    },
+    {
+      "probe": "storage-choice",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.3,
+      "style": 0.0,
+      "delta_pct": -100.0,
+      "status": "ok"
+    },
+    {
+      "probe": "storage-choice",
+      "metric": "banned_terms",
+      "baseline": 0.2,
+      "style": 0.4,
+      "delta_pct": 100.0,
+      "status": "NO MOVEMENT"
+    }
+  ],
+  "guards": [
+    {
+      "probe": "tcp-congestion",
+      "metric": "coverage_pct",
+      "baseline": 94.0,
+      "style": 95.0,
+      "delta_pct": 1.1,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "words",
+      "baseline": 602.9,
+      "style": 685.6,
+      "delta_pct": 13.7,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "sections",
+      "baseline": 1.1,
+      "style": 1.7,
+      "delta_pct": 54.5,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "coverage_pct",
+      "baseline": 100.0,
+      "style": 96.7,
+      "delta_pct": -3.3,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "words",
+      "baseline": 132.3,
+      "style": 166.8,
+      "delta_pct": 26.1,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "coverage_pct",
+      "baseline": 81.7,
+      "style": 76.7,
+      "delta_pct": -6.1,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "words",
+      "baseline": 420.5,
+      "style": 470,
+      "delta_pct": 11.8,
+      "guarded": false,
+      "status": "reported"
+    }
+  ],
+  "failures": [
+    "storage-choice: owned metric 'banned_terms' did not improve (+100%)"
+  ]
+}

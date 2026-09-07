@@ -1,0 +1,192 @@
+{
+  "style": "no-slop-2026.09.07",
+  "baseline": "no-slop-2026.09.06",
+  "style_sha256": "c5e840c2e4d7293c33408e2a51469041e7ac183d45762f90fdf6f1505ec4a5b9",
+  "pack_sha256": "4a914e7175eeb2c2e68c975a676306d236e7ef03fa860c0cfb7fcd26b96f1e49",
+  "seed": 20260907,
+  "read": "2026-09-07T04:40:41.303Z",
+  "reader": null,
+  "n": 12,
+  "unjudged": [],
+  "tally": {
+    "no-slop-2026.09.07": 6,
+    "no-slop-2026.09.06": 2,
+    "tie": 4
+  },
+  "per_probe": {
+    "tcp-congestion": {
+      "no-slop-2026.09.07": 2,
+      "no-slop-2026.09.06": 0,
+      "tie": 1
+    },
+    "storage-choice": {
+      "no-slop-2026.09.07": 2,
+      "no-slop-2026.09.06": 1,
+      "tie": 0
+    },
+    "cleanup-codebase": {
+      "no-slop-2026.09.07": 1,
+      "no-slop-2026.09.06": 1,
+      "tie": 1
+    },
+    "own-output-critique": {
+      "no-slop-2026.09.07": 1,
+      "no-slop-2026.09.06": 0,
+      "tie": 2
+    }
+  },
+  "preferred_pct": 75.0,
+  "sign_test_p": 0.28906,
+  "roles": {
+    "own-output-critique": "target+guard",
+    "storage-choice": "target",
+    "tcp-congestion": "guard",
+    "cleanup-codebase": "guard"
+  },
+  "pairs": [
+    {
+      "pair": "p01",
+      "probe": "tcp-congestion",
+      "role": "guard",
+      "pick": "left",
+      "chose": "no-slop-2026.09.07",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.06",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.07/r06.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.06/r06.md",
+      "note": ""
+    },
+    {
+      "pair": "p02",
+      "probe": "storage-choice",
+      "role": "target",
+      "pick": "left",
+      "chose": "no-slop-2026.09.06",
+      "left": "no-slop-2026.09.06",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/storage-choice/no-slop-2026.09.06/r05.md",
+      "right_file": "samples/storage-choice/no-slop-2026.09.07/r04.md",
+      "note": ""
+    },
+    {
+      "pair": "p03",
+      "probe": "storage-choice",
+      "role": "target",
+      "pick": "left",
+      "chose": "no-slop-2026.09.07",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.06",
+      "left_file": "samples/storage-choice/no-slop-2026.09.07/r06.md",
+      "right_file": "samples/storage-choice/no-slop-2026.09.06/r02.md",
+      "note": ""
+    },
+    {
+      "pair": "p04",
+      "probe": "tcp-congestion",
+      "role": "guard",
+      "pick": "tie",
+      "chose": "tie",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.06",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.07/r04.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.06/r05.md",
+      "note": ""
+    },
+    {
+      "pair": "p05",
+      "probe": "cleanup-codebase",
+      "role": "guard",
+      "pick": "right",
+      "chose": "no-slop-2026.09.06",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.06",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.07/r01.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.06/r01.md",
+      "note": ""
+    },
+    {
+      "pair": "p06",
+      "probe": "own-output-critique",
+      "role": "target+guard",
+      "pick": "tie",
+      "chose": "tie",
+      "left": "no-slop-2026.09.06",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.06/r07.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.07/r08.md",
+      "note": ""
+    },
+    {
+      "pair": "p07",
+      "probe": "storage-choice",
+      "role": "target",
+      "pick": "right",
+      "chose": "no-slop-2026.09.07",
+      "left": "no-slop-2026.09.06",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/storage-choice/no-slop-2026.09.06/r09.md",
+      "right_file": "samples/storage-choice/no-slop-2026.09.07/r03.md",
+      "note": ""
+    },
+    {
+      "pair": "p08",
+      "probe": "own-output-critique",
+      "role": "target+guard",
+      "pick": "tie",
+      "chose": "tie",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.06",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.07/r04.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.06/r04.md",
+      "note": ""
+    },
+    {
+      "pair": "p09",
+      "probe": "cleanup-codebase",
+      "role": "guard",
+      "pick": "left",
+      "chose": "no-slop-2026.09.07",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.06",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.07/r03.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.06/r10.md",
+      "note": ""
+    },
+    {
+      "pair": "p10",
+      "probe": "cleanup-codebase",
+      "role": "guard",
+      "pick": "tie",
+      "chose": "tie",
+      "left": "no-slop-2026.09.06",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.06/r02.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.07/r10.md",
+      "note": ""
+    },
+    {
+      "pair": "p11",
+      "probe": "tcp-congestion",
+      "role": "guard",
+      "pick": "right",
+      "chose": "no-slop-2026.09.07",
+      "left": "no-slop-2026.09.06",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.06/r09.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.07/r01.md",
+      "note": ""
+    },
+    {
+      "pair": "p12",
+      "probe": "own-output-critique",
+      "role": "target+guard",
+      "pick": "right",
+      "chose": "no-slop-2026.09.07",
+      "left": "no-slop-2026.09.06",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.06/r10.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.07/r10.md",
+      "note": ""
+    }
+  ]
+}

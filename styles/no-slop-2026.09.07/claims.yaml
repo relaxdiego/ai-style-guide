@@ -1,0 +1,55 @@
+# What this style claims, and what bin/score.py --check holds it to.
+#
+#   id        the condition directory name under samples/<probe>/
+#   baseline  the arm to compare against; defaults to control
+#   owns      metrics that must improve on every probe in `probes`
+#   guards    probes that must not move (coverage where declared, else words)
+#   banned    terms counted for the banned_terms metric, word-bounded
+
+id: no-slop-2026.09.07
+
+# Measured against the version it replaces, not against control. Control barely
+# uses em dashes: 9 across the 40 original samples, and 0 across the 10
+# own-output-critique control samples. no-slop-2026.09.06 raised that to 58 and
+# 11, because its own text used two. "Fewer em dashes than control" is not a
+# question with an answer; "fewer than the version being replaced" is.
+baseline: no-slop-2026.09.06
+
+# words and prose_paragraphs are deliberately not owned here. Those are
+# no-slop-2026.09.06's claims, already measured against control in its own
+# results.md, and this version is not trying to compress further. The guards
+# below are what hold it to them.
+owns:   [em_dashes_per_100w, banned_terms]
+probes: [own-output-critique, storage-choice]
+guards: [tcp-congestion, cleanup-codebase, own-output-critique]
+
+# storage-choice fails on banned_terms and the failure is kept rather than
+# argued away. Every hit is "genuine" or "genuinely" used as ordinary English:
+# "genuinely hard to undo", "genuinely hard to reverse", "a genuinely
+# local-first app", "PGlite is a genuine option". The list is headed "banned as
+# labels or openers", so none of those is a violation of the rule as written,
+# but banned_terms counts every word-bounded occurrence wherever it sits. The
+# rule and the metric are measuring different things, which was inherited from
+# no-slop-2026.09.06 and not introduced here. Closing it means either banning
+# those words in every position, which also forbids ordinary English, or making
+# the metric position-aware. Until one of those is decided, the honest record is
+# a FAIL on this row.
+#
+# What the row hides is worth reading off own-output-critique, where the coined
+# nouns are what actually move. no-slop-2026.09.06 emits gradient 5, texture 3,
+# joints 2, axis 2, load-bearing 1, archaeology 1 across ten samples.
+# no-slop-2026.09.07 emits gradient 1 and nothing else from that group. The
+# residue in both target probes is "genuinely", the one banned word that is also
+# ordinary English.
+
+# The first 13 are no-slop-2026.09.06's list. The rest are the coinages
+# no-slop-2026.09.06 still emits on own-output-critique, harvested from its own
+# samples rather than recalled: joints 2, gradient 1, topography 1, axis 3.
+# "tells" and "artifact" were rejected on inspection: every occurrence was the
+# ordinary verb or the ordinary build noun. "uniform" and "uneven" were rejected
+# because own-output-critique guards them as coverage markers.
+banned: ["load-bearing", "worth noting", "worth naming", "worth knowing",
+  "honestly", "frankly", "genuine", "genuinely", "seam", "seams",
+  "absorb the divergence", "wearing", "dressed as",
+  "texture", "grain", "joints", "gradient", "topography", "contour",
+  "residue", "fossil", "archaeology", "axis", "axes"]

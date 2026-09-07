@@ -1,0 +1,16 @@
+{
+  "probe": "storage-choice",
+  "condition": "no-slop-2026.09.07",
+  "style": "styles/no-slop-2026.09.07",
+  "delivery": "output-style",
+  "style_sha256": "c5e840c2e4d7293c33408e2a51469041e7ac183d45762f90fdf6f1505ec4a5b9",
+  "style_version": "2026.09.07",
+  "model": "opus",
+  "model_ids": ["claude-opus-5"],
+  "cli_version": "2.1.263",
+  "captured": "2026-09-07T04:11:06Z",
+  "reps": 10,
+  "tools": "none",
+  "flags": "--tools '' --strict-mcp-config --setting-sources project --no-session-persistence",
+  "cwd": "empty non-git tmpdir with synthesized .claude/"
+}
