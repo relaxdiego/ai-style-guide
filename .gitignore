@@ -4,3 +4,8 @@
 # Editor swap files
 *.swp
 *.swo
+
+# Blind-read build outputs. Both inline every sample they draw, and both
+# rebuild byte-identical from key.json's seed plus samples/.
+styles/*/blind/pack.json
+styles/*/blind/page.html

@@ -2,6 +2,14 @@
 
 An experiment harness that measures whether a written style rule, delivered to Claude Code as an [output style](https://code.claude.com/docs/en/output-styles), actually changes the model's output, and whether it damages anything else in the process.
 
+## Testing a style yourself
+
+Ask Claude Code to run the blind read for you:
+
+> Build a blind read for `styles/no-slop` and publish it, then score my picks.
+
+It will run `bin/blind.py build`, publish the generated `page.html` as an Artifact, and hand you a link. Read the pairs, pick A, B or no preference on each, and hit **Reveal the key** once all of them are judged. Copy the picks JSON off the reveal screen and paste it back into the session; Claude Code runs `bin/blind.py record` and writes the result to `styles/<name>/blind-read.md`.
+
 ## How the experiment is set up
 
 Every probe runs under scaffolding that is byte-identical except for the output style setting, so a measured delta is attributable to a rule rather than to the environment.
@@ -64,6 +72,26 @@ All metrics are deterministic and structural, computed per sample file by `bin/s
 
 `--check` writes its verdict back into the style directory as `results.md` and `results.json`, so a style ships with the record that justifies it. Both are rewritten only when the numbers change, so the date they carry is when the result last moved rather than when the check last ran. The current one is [`styles/no-slop/results.md`](styles/no-slop/results.md).
 
+## The human gate
+
+The metrics say a style got shorter and dropped its banned terms. They cannot say the result reads better, so `bin/blind.py` puts a person in the loop under the same discipline the metrics get.
+
+`build` draws `--per-probe` reps from each condition of each probe, pairs one control response with one styled response for the same prompt, and writes three files into `styles/<name>/blind/`:
+
+| file | what it is |
+|---|---|
+| `pack.json` | what the reader sees: probe, prompt, left text, right text |
+| `key.json` | which side was which, the sample file behind each side, and the seed |
+| `page.html` | `pack.json` injected into `bin/blind-page.html`, ready to publish as an Artifact |
+
+Three things keep the read honest. Reps are drawn independently per condition, because `r03` in one cell has nothing to do with `r03` in the other and pairing them by number would be a false pairing. Side assignment is balanced rather than coin-flipped: over 12 pairs a fair coin lands 10–2 often enough to matter, and readers favour a column. Pair order is shuffled so probes interleave. Like `--check`, `build` refuses to run against samples captured under a different `style.md`.
+
+The page keeps the key base64-encoded and unlocks it only once every pair has a verdict. That is obfuscation, not secrecy — the reader is blinding themselves, not defending against themselves — and `key.json` in the repo is the copy `record` scores against. Picks persist in the artifact's store as they are made, so the read can be put down and picked up.
+
+`bin/blind.py record` joins the picks back to the key and writes `blind-read.md` and `blind-read.json` beside `results.md`. The record carries a two-sided sign test over the decided pairs, marks which probes were targets and which were guards, and states what the tally cannot show — those lines are written from the numbers, so the file cannot go on claiming a caveat the data stopped supporting. The current one is [`styles/no-slop/blind-read.md`](styles/no-slop/blind-read.md).
+
+Nothing here feeds `--check`. A blind read is evidence filed next to the machine verdict, not a second gate that can fail a style.
+
 ## Running it
 
 ```
@@ -78,6 +106,12 @@ bin/score.py samples/storage-choice/control samples/storage-choice/no-slop
 
 # check the style against its claims, and rewrite its results.md
 bin/score.py --check styles/no-slop
+
+# build a blinded A/B pack, publish styles/no-slop/blind/page.html, read it
+bin/blind.py build styles/no-slop --per-probe 3
+
+# score the picks the page hands back
+bin/blind.py record styles/no-slop --picks picks.json
 ```
 
 Probe files live in `prompts/`. `bin/capture.sh <probe.md> <condition> [reps] [style-dir]` defaults to 10 reps. Name the condition after the style's `id` so `--check` can find it. `MODEL` defaults to `opus` and `CONCURRENCY` to `3`.
@@ -92,9 +126,14 @@ styles/<style>/
   style.md                      the output style, delivered verbatim
   claims.yaml                   owns / probes / guards / banned
   results.md, results.json      written by --check
+  blind-read.md, .json          written by blind.py record
+  blind/key.json                the pack's answer key and seed
+  blind/pack.json, page.html    generated, gitignored
 samples/<probe>/control/        r01.md … r10.md, meta.json, scores.json
 samples/<probe>/<style>/        the same, captured under that style
 bin/capture.sh                  clean-room capture
 bin/score.py                    metrics, scores.json, --check
+bin/blind.py                    blinded A/B pack, and scoring a human's picks
+bin/blind-page.html             the page template blind.py builds into
 devbox.json, .envrc             environment
 ```
