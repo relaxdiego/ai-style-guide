@@ -1,9 +1,10 @@
 # What this style claims, and what bin/score.py --check holds it to.
 #
-#   id      the condition directory name under samples/<probe>/
-#   owns    metrics that must improve on every probe in `probes`
-#   guards  probes that must not move (coverage where declared, else words)
-#   banned  terms counted for the banned_terms metric, word-bounded
+#   id        the condition directory name under samples/<probe>/
+#   baseline  the arm to compare against; defaults to control
+#   owns      metrics that must improve on every probe in `probes`
+#   guards    probes that must not move (coverage where declared, else words)
+#   banned    terms counted for the banned_terms metric, word-bounded
 
 id: no-slop-2026.09.06
 

@@ -10,6 +10,12 @@ directory, prints deltas against the first (the baseline).
 --check reads a style's claims.yaml and verifies the two claims it makes: that
 the metrics it *owns* improved on the probes it targets, and that its guard
 probes did not move. A style that shortens an explanation probe is over-firing.
+
+The arm it compares against is `control` unless claims.yaml names another with
+`baseline:`. A style that revises an earlier one sets it to that earlier one:
+where control already sits at zero on a metric, "better than control" is not a
+question with an answer, and "better than the version being replaced" is.
+
 The verdict is written back into the style directory as results.md and
 results.json, so a style ships with its own measured record. Those files are
 rewritten only when the numbers change, so their `checked` date is the date the
@@ -110,7 +116,8 @@ BOOLEAN = ["trailing_question", "restates_verdict"]
 # Metrics a rule is expected to drive down. first_verdict_pct is deliberately
 # absent: landing the answer earlier is good, but so is a probe with no verdict.
 LOWER_IS_BETTER = {"words", "elaboration_ratio", "prose_paragraphs", "sections",
-                   "trailing_question", "restates_verdict", "banned_terms"}
+                   "trailing_question", "restates_verdict", "banned_terms",
+                   "em_dashes_per_100w"}
 
 # A guard probe may drift this much before it counts as collateral damage.
 GUARD_TOLERANCE = 0.15
@@ -196,6 +203,11 @@ def load_claims(style_dir):
     text = re.sub(r"^[ \t]*#.*$", "", path.read_text(), flags=re.M)
     m = re.search(r"^id:\s*(.+)$", text, re.M)
     claims = {"id": m.group(1).strip() if m else Path(style_dir).name}
+    # A later version of a style is measured against the version it replaces,
+    # not against control: once control already sits near zero on a metric, the
+    # only honest question is whether the new text beats the old text.
+    b = re.search(r"^baseline:\s*(.+)$", text, re.M)
+    claims["baseline"] = b.group(1).strip() if b else "control"
     for key in ("owns", "probes", "guards", "banned"):
         claims[key] = _list_key(text, key)
     return claims
@@ -256,7 +268,7 @@ def metric_mean(result, key):
     return s["rate"] if "rate" in s else s["mean"]
 
 
-def provenance(root, sid, probes):
+def provenance(root, sid, probes, baseline="control"):
     """What the compared samples were captured with, read off their meta.json."""
     # model is the alias that was requested ("opus"); model_ids are the exact
     # snapshots the requests actually ran on, read off modelUsage at capture
@@ -265,7 +277,7 @@ def provenance(root, sid, probes):
     seen = {"model": set(), "model_ids": set(), "cli_version": set(),
             "reps": set(), "captured": set()}
     for probe in probes:
-        for cond in ("control", sid):
+        for cond in (baseline, sid):
             m = root / "samples" / probe / cond / "meta.json"
             if not m.exists():
                 continue
@@ -285,10 +297,14 @@ def _rows(root, claims, sid):
     """Score every declared probe and return (target rows, guard rows, failures)."""
     targets, guards, failures = [], [], []
     measured = {}   # owned metric -> did any probe give it room to move?
+    baseline = claims["baseline"]
 
     for probe in claims["probes"]:
-        base_d = root / "samples" / probe / "control"
+        base_d = root / "samples" / probe / baseline
         style_d = root / "samples" / probe / sid
+        if not base_d.exists():
+            failures.append(f"{probe}: no samples for baseline '{baseline}' — capture it first")
+            continue
         if not style_d.exists():
             failures.append(f"{probe}: no samples for condition '{sid}' — capture it first")
             continue
@@ -299,7 +315,7 @@ def _rows(root, claims, sid):
                 r = banned_mean(style_d, claims["banned"])
             else:
                 b, r = metric_mean(base, k), metric_mean(styled, k)
-            row = {"probe": probe, "metric": k, "control": b, "style": r}
+            row = {"probe": probe, "metric": k, "baseline": b, "style": r}
             if b is None or r is None:
                 row["status"] = "n/a"
             elif b == 0 and k in LOWER_IS_BETTER:
@@ -318,8 +334,11 @@ def _rows(root, claims, sid):
             targets.append(row)
 
     for probe in claims["guards"]:
-        base_d = root / "samples" / probe / "control"
+        base_d = root / "samples" / probe / baseline
         style_d = root / "samples" / probe / sid
+        if not base_d.exists():
+            failures.append(f"{probe}: no guard samples for baseline '{baseline}'")
+            continue
         if not style_d.exists():
             failures.append(f"{probe}: no guard samples for condition '{sid}'")
             continue
@@ -338,7 +357,7 @@ def _rows(root, claims, sid):
             bad = (delta < -GUARD_TOLERANCE if k == "coverage_pct"
                    else abs(delta) > GUARD_TOLERANCE)
             guards.append({
-                "probe": probe, "metric": k, "control": b, "style": r,
+                "probe": probe, "metric": k, "baseline": b, "style": r,
                 "delta_pct": round(100 * delta, 1),
                 "guarded": k in guarded,
                 "status": ("ok" if not bad else "COLLATERAL") if k in guarded
@@ -370,7 +389,7 @@ def _delta(row):
 def render_md(report):
     """The style's own record, regenerated on every check."""
     c, p = report["claims"], report["provenance"]
-    cond = report["style"]
+    cond, base = report["style"], report["baseline"]
     when = " to ".join(p["captured"]) if len(p["captured"]) > 1 else p["captured"][0]
     L = [
         f"# {cond} — measured result",
@@ -391,20 +410,21 @@ def render_md(report):
         f"- **owns** {', '.join(c['owns']) or '(nothing)'}",
         f"- **probes** {', '.join(c['probes']) or '(none)'}",
         f"- **guards** {', '.join(c['guards']) or '(none)'}",
+        f"- **baseline** {base}",
         "",
         "## Targets",
         "",
-        f"| probe | metric | control | {cond} | delta | |",
+        f"| probe | metric | {base} | {cond} | delta | |",
         "|---|---|---|---|---|---|",
     ]
     for r in report["targets"]:
-        L.append(f"| {r['probe']} | `{r['metric']}` | {_cell(r['control'])} | "
+        L.append(f"| {r['probe']} | `{r['metric']}` | {_cell(r['baseline'])} | "
                  f"{_cell(r['style'])} | {_delta(r)} | {r['status']} |")
     L += ["", "## Guards", "",
-          f"| probe | metric | control | {cond} | delta | |",
+          f"| probe | metric | {base} | {cond} | delta | |",
           "|---|---|---|---|---|---|"]
     for r in report["guards"]:
-        L.append(f"| {r['probe']} | `{r['metric']}` | {_cell(r['control'])} | "
+        L.append(f"| {r['probe']} | `{r['metric']}` | {_cell(r['baseline'])} | "
                  f"{_cell(r['style'])} | {_delta(r)} | {r['status']} |")
     if report["failures"]:
         L += ["", "## Failures", ""] + [f"- {f}" for f in report["failures"]]
@@ -417,19 +437,30 @@ def check_style(style_dir):
     claims = load_claims(style_dir)
     sid = claims["id"]
     name = style_name(style_dir)
-    probes = claims["probes"] + claims["guards"]
+    # A probe may be both a target and a guard; provenance need only see it once.
+    probes = list(dict.fromkeys(claims["probes"] + claims["guards"]))
 
+    baseline = claims["baseline"]
     targets, guards, failures = _rows(root, claims, sid)
     failures = stale_samples(root, style_dir, sid, probes) + failures
+    # A baseline that is itself a style has a style.md of its own; if that file
+    # has moved, the comparison is against text nobody is shipping either.
+    if baseline != "control":
+        base_dir = root / "styles" / baseline
+        if not (base_dir / "style.md").exists():
+            failures.insert(0, f"baseline '{baseline}': no styles/{baseline}/style.md")
+        else:
+            failures = stale_samples(root, base_dir, baseline, probes) + failures
     report = {
         "style": sid,
+        "baseline": baseline,
         "name": name,
         "dir": str(style_dir).rstrip("/"),
         "style_sha256": style_digest(style_dir),
         "checked": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "result": "FAIL" if failures else "PASS",
         "claims": claims,
-        "provenance": provenance(root, sid, probes),
+        "provenance": provenance(root, sid, probes, baseline),
         "targets": targets,
         "guards": guards,
         "failures": failures,
@@ -439,13 +470,14 @@ def check_style(style_dir):
     print(f"  owns:   {', '.join(claims['owns']) or '(nothing)'}")
     print(f"  probes: {', '.join(claims['probes']) or '(none)'}")
     print(f"  guards: {', '.join(claims['guards']) or '(none)'}")
+    print(f"  vs:     {baseline}")
     for section, rows in (("", targets), (" (guard)", guards)):
         last = None
         for r in rows:
             if r["probe"] != last:
                 print(f"\n  {r['probe']}{section}")
                 last = r["probe"]
-            print(f"    {r['metric']:<22} {_cell(r['control']):>7} -> "
+            print(f"    {r['metric']:<22} {_cell(r['baseline']):>7} -> "
                   f"{_cell(r['style']):>7}  ({_delta(r)})  {r['status']}")
 
     # `checked` is the date the result last moved. Rewriting it on every run

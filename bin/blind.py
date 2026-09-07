@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """Build a blinded A/B pack from captured samples, and score a human's picks.
 
-    bin/blind.py build styles/no-slop-2026.09.06-2026.09.06 [--per-probe 3] [--seed N]
-    bin/blind.py record styles/no-slop-2026.09.06-2026.09.06 --picks picks.json
+    bin/blind.py build styles/no-slop-2026.09.07 [--per-probe 3] [--seed N]
+    bin/blind.py record styles/no-slop-2026.09.07 --picks picks.json
 
 The structural metrics in bin/score.py say a style got shorter and dropped its
 banned terms. They cannot say the result reads better. This adds the human gate:
 pairs of responses to the same prompt, one from each condition, presented
 unlabelled and in randomised order, with the key withheld until every pair has
 been judged.
+
+The other side of each pair comes from the condition named by `baseline:` in
+claims.yaml, which defaults to control. A style that revises an earlier one
+points at that earlier one, so the read asks whether the new text is preferred
+to the text it replaces rather than to no style at all.
 
 `build` draws --per-probe reps from each condition of each probe, pairs them,
 flips a coin per pair for which side is shown first, shuffles the pair order so
@@ -63,6 +68,8 @@ def claims(style_dir):
     text = re.sub(r"^[ \t]*#.*$", "", path.read_text(), flags=re.M)
     m = re.search(r"^id:\s*(.+)$", text, re.M)
     out = {"id": m.group(1).strip() if m else Path(style_dir).name}
+    b = re.search(r"^baseline:\s*(.+)$", text, re.M)
+    out["baseline"] = b.group(1).strip() if b else "control"
     for key in ("probes", "guards"):
         g = re.search(rf"^{key}:\s*\[(.*?)\]", text, re.M | re.S)
         out[key] = ([v.strip().strip("\"'") for v in g.group(1).split(",") if v.strip()]
@@ -111,19 +118,24 @@ def build(style_dir, per_probe, seed):
     style_dir = Path(style_dir)
     c = claims(style_dir)
     sid = c["id"]
-    probes = c["probes"] + c["guards"]
+    base = c["baseline"]
+    probes = list(dict.fromkeys(c["probes"] + c["guards"]))
     style_sha = check_provenance(style_dir, sid, probes)
+    # A baseline that is itself a style is held to its own style.md, so a pack
+    # cannot pair the new text against a stale capture of the old text.
+    if base != "control":
+        check_provenance(ROOT / "styles" / base, base, probes)
 
     rng = random.Random(seed)
     drawn = []
     for probe in probes:
-        ctrl = sample_files(probe, "control")
+        ctrl = sample_files(probe, base)
         styled = sample_files(probe, sid)
         n = min(per_probe, len(ctrl), len(styled))
         # Independent draws: rep numbers carry no meaning across conditions, so
         # pairing r03 with r03 would be a false pairing, not a matched one.
         for a, b in zip(rng.sample(ctrl, n), rng.sample(styled, n)):
-            drawn.append({"probe": probe, "control": a, sid: b})
+            drawn.append({"probe": probe, base: a, sid: b})
 
     # Interleave the probes so neither position in the run nor a run of the same
     # prompt tells the reader anything.
@@ -133,12 +145,12 @@ def build(style_dir, per_probe, seed):
     # coin over 12 pairs lands 10-2 often enough to matter, and readers favour
     # one column; an exactly even split removes position from the result.
     half = len(drawn) // 2
-    order = ["control"] * half + [sid] * (len(drawn) - half)
+    order = [base] * half + [sid] * (len(drawn) - half)
     rng.shuffle(order)
 
     pairs, key = [], {}
     for i, (d, first) in enumerate(zip(drawn, order), 1):
-        second = sid if first == "control" else "control"
+        second = sid if first == base else base
         pid = f"p{i:02d}"
         pairs.append({
             "id": pid,
@@ -158,6 +170,7 @@ def build(style_dir, per_probe, seed):
 
     pack = {
         "style": sid,
+        "baseline": base,
         "style_sha256": style_sha,
         "seed": seed,
         "per_probe": per_probe,
@@ -176,6 +189,7 @@ def build(style_dir, per_probe, seed):
         sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     (out / "key.json").write_text(json.dumps({
         "style": sid,
+        "baseline": base,
         "style_sha256": style_sha,
         "seed": seed,
         "pack_sha256": pack_sha,
@@ -247,10 +261,14 @@ def record(style_dir, picks_path):
     missing = sorted(set(key) - set(picks))
 
     sid = kd["style"]
+    # Packs built before baselines existed have no such field and were all
+    # control-vs-style, so that is the right default rather than a failure.
+    base = kd.get("baseline", "control")
     c = claims(style_dir)
-    role = {**{p: "target" for p in c["probes"]},
-            **{p: "guard" for p in c["guards"]}}
-    rows, tally = [], {sid: 0, "control": 0, "tie": 0}
+    role = {p: ("target+guard" if p in c["guards"] else "target")
+            for p in c["probes"]}
+    role.update({p: role.get(p, "guard") for p in c["guards"]})
+    rows, tally = [], {sid: 0, base: 0, "tie": 0}
     per_probe = {}
     for pid in sorted(key):
         if pid not in picks:
@@ -261,7 +279,7 @@ def record(style_dir, picks_path):
             sys.exit(f"{pid}: pick must be left, right or tie (got {pick!r})")
         chose = "tie" if pick == "tie" else k[pick]
         tally[chose] += 1
-        t = per_probe.setdefault(k["probe"], {sid: 0, "control": 0, "tie": 0})
+        t = per_probe.setdefault(k["probe"], {sid: 0, base: 0, "tie": 0})
         t[chose] += 1
         rows.append({
             "pair": pid,
@@ -280,6 +298,7 @@ def record(style_dir, picks_path):
     decided = n - tally["tie"]
     report = {
         "style": sid,
+        "baseline": base,
         "style_sha256": kd["style_sha256"],
         "pack_sha256": kd["pack_sha256"],
         "seed": kd["seed"],
@@ -290,7 +309,7 @@ def record(style_dir, picks_path):
         "tally": tally,
         "per_probe": per_probe,
         "preferred_pct": round(100 * tally[sid] / decided, 1) if decided else None,
-        "sign_test_p": sign_test(tally[sid], tally["control"]),
+        "sign_test_p": sign_test(tally[sid], tally[base]),
         "roles": role,
         "pairs": rows,
     }
@@ -299,7 +318,7 @@ def record(style_dir, picks_path):
 
     print(f"\nblind read — {sid}")
     print(f"  {sid:<12} {tally[sid]}")
-    print(f"  {'control':<12} {tally['control']}")
+    print(f"  {base:<12} {tally[base]}")
     print(f"  {'no pref':<12} {tally['tie']}")
     if missing:
         print(f"  unjudged     {', '.join(missing)}")
@@ -309,6 +328,7 @@ def record(style_dir, picks_path):
 
 def render(r):
     sid = r["style"]
+    base = r.get("baseline", "control")
     t = r["tally"]
     pct = ("n/a" if r["preferred_pct"] is None
            else f"{r['preferred_pct']:.0f}% of decided pairs")
@@ -320,18 +340,18 @@ def render(r):
         f"against `style.md` {r['style_sha256'][:12]}, pack "
         f"{r['pack_sha256'][:12]}, seed {r['seed']}.",
         "",
-        f"**{sid} preferred in {t[sid]} of {r['n']} pairs** ({pct}); control in "
-        f"{t['control']}; no preference in {t['tie']}.",
+        f"**{sid} preferred in {t[sid]} of {r['n']} pairs** ({pct}); {base} in "
+        f"{t[base]}; no preference in {t['tie']}.",
         "",
         f"Regenerated by `bin/blind.py record {r.get('dir', 'styles/' + sid)}`.",
         "",
         "## By probe",
         "",
-        f"| probe | {sid} | control | no preference |",
+        f"| probe | {sid} | {base} | no preference |",
         "|---|---|---|---|",
     ]
     for probe, c in sorted(r["per_probe"].items()):
-        L.append(f"| {probe} | {c[sid]} | {c['control']} | {c['tie']} |")
+        L.append(f"| {probe} | {c[sid]} | {c[base]} | {c['tie']} |")
     L += ["", "## Pairs", "",
           "| pair | probe | chose | shown left | shown right | note |",
           "|---|---|---|---|---|---|"]
@@ -353,17 +373,18 @@ def limits(r):
     claiming a caveat the data stopped supporting.
     """
     sid = r["style"]
+    base = r.get("baseline", "control")
     t = r["tally"]
-    decided = t[sid] + t["control"]
+    decided = t[sid] + t[base]
     guards = sum(1 for p in r["pairs"] if p["role"] == "guard")
     out = []
     if r["sign_test_p"] is not None:
         out.append(
-            f"- **Sign test.** {t[sid]}-{t['control']} over {decided} decided "
+            f"- **Sign test.** {t[sid]}-{t[base]} over {decided} decided "
             f"pairs, two-sided p = {r['sign_test_p']:g}, against a null of a "
             f"reader picking by coin flip. Ties are dropped, not split.")
-    if decided and max(t[sid], t["control"]) == decided:
-        winner = sid if t[sid] > t["control"] else "control"
+    if decided and max(t[sid], t[base]) == decided:
+        winner = sid if t[sid] > t[base] else base
         out.append(
             f"- **The sweep is the caveat.** {winner} took every decided pair, "
             f"so the reader separated the conditions perfectly. Labels were "

@@ -9,3 +9,6 @@
 # rebuild byte-identical from key.json's seed plus samples/.
 styles/*/blind/pack.json
 styles/*/blind/page.html
+
+# Byte-compiled cache, created if bin/*.py is imported rather than run.
+__pycache__/

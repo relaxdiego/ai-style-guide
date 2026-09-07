@@ -436,6 +436,9 @@ const PACK = __PACK__;
 const KEY_B64 = __KEY__;
 const PACK_SHA = __PACK_SHA__;
 const SID = PACK.style;
+// The other arm of every pair. Packs built before baselines existed carry no
+// such field and were all control-vs-style, so that is the right default.
+const BASE = PACK.baseline || "control";
 const PAIRS = PACK.pairs;
 const LS = "blindread:" + PACK_SHA;
 
@@ -622,14 +625,14 @@ document.getElementById("finish").onclick = () => {
 
 function reveal() {
   const key = JSON.parse(atob(KEY_B64));
-  const tally = { [SID]: 0, control: 0, tie: 0 };
+  const tally = { [SID]: 0, [BASE]: 0, tie: 0 };
   const byProbe = {};
   const rows = PAIRS.map(p => {
     const k = key[p.id];
     const pick = state.picks[p.id];
     const chose = pick === "tie" ? "tie" : k[pick];
     tally[chose] += 1;
-    const t = byProbe[p.probe] || (byProbe[p.probe] = { [SID]: 0, control: 0, tie: 0 });
+    const t = byProbe[p.probe] || (byProbe[p.probe] = { [SID]: 0, [BASE]: 0, tie: 0 });
     t[chose] += 1;
     return { id: p.id, probe: p.probe, chose, k, note: state.notes[p.id] || "" };
   });
@@ -650,13 +653,13 @@ function reveal() {
     <p class="sub">${pct}% of the ${decided} pairs where you had a preference · pack ${PACK_SHA} · seed ${PACK.seed}</p>
     <div class="tiles">
       <div class="tile" data-kind="style"><span class="n">${tally[SID]}</span><span class="k">${SID}</span></div>
-      <div class="tile"><span class="n">${tally.control}</span><span class="k">control</span></div>
+      <div class="tile"><span class="n">${tally[BASE]}</span><span class="k">${BASE}</span></div>
       <div class="tile"><span class="n">${tally.tie}</span><span class="k">no preference</span></div>
     </div>
     <h2>By probe</h2>
-    <table class="rtable"><thead><tr><th>Probe</th><th>${SID}</th><th>Control</th><th>No preference</th></tr></thead><tbody>
+    <table class="rtable"><thead><tr><th>Probe</th><th>${SID}</th><th>${BASE}</th><th>No preference</th></tr></thead><tbody>
       ${Object.entries(byProbe).map(([probe, t]) =>
-        `<tr><td class="p">${probe}</td><td>${t[SID]}</td><td>${t.control}</td><td>${t.tie}</td></tr>`).join("")}
+        `<tr><td class="p">${probe}</td><td>${t[SID]}</td><td>${t[BASE]}</td><td>${t.tie}</td></tr>`).join("")}
     </tbody></table>
     <h2>Pair by pair</h2>
     <table class="rtable"><thead><tr><th>Pair</th><th>Probe</th><th>A was</th><th>B was</th><th>You chose</th><th>Note</th></tr></thead><tbody>
