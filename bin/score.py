@@ -285,9 +285,11 @@ def metric_mean(result, key):
 def provenance(root, sid, probes, baseline="control"):
     """What the compared samples were captured with, read off their meta.json."""
     # model is the alias that was requested ("opus"); model_ids are the exact
-    # snapshots the requests actually ran on, read off modelUsage at capture
-    # time. Samples captured before model_ids existed leave it empty, and the
-    # record then says the alias is all that is known rather than inventing one.
+    # snapshots that produced the responses, read off modelUsage at capture time
+    # as the model with the most output tokens per rep. modelUsage also lists a
+    # fixed haiku housekeeping call, which is not what answered. Samples
+    # captured before model_ids existed leave it empty, and the record then says
+    # the alias is all that is known rather than inventing one.
     seen = {"model": set(), "model_ids": set(), "cli_version": set(),
             "reps": set(), "captured": set()}
     for probe in probes:

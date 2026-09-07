@@ -97,7 +97,7 @@ seq 1 "$REPS" | xargs -P "$CONCURRENCY" -I{} bash -c '
   fi
   jq -r ".result" <<< "$raw" > "$out"
   printf -v idf "%s/r%02d" "$IDS" "$1"
-  jq -r ".modelUsage | keys[]" <<< "$raw" > "$idf"
+  jq -r "[.modelUsage | to_entries[] | select(.value.outputTokens > 0)] | max_by(.value.outputTokens) | .key" <<< "$raw" > "$idf"
   printf "  r%02d: %s words (%s)\n" "$1" "$(wc -w < "$out")" "$(tr "\n" "," < "$idf" | sed "s/,$//")"
 ' _ {}
 
