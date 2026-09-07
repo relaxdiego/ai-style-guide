@@ -225,6 +225,20 @@ def style_name(style_dir):
     return n.group(1).strip()
 
 
+def style_version(style_dir):
+    """The frontmatter `version` of style.md, or None.
+
+    Claude Code ignores the key: a canary style carrying `version: KTRQ9ZZ`
+    applied identically to one without it, and asking the model whether that
+    token appeared anywhere in its instructions returned "No". So the field
+    identifies an installed copy without changing the text under measurement.
+    """
+    path = Path(style_dir) / "style.md"
+    m = re.search(r"^---\n(.*?)\n---", path.read_text(), re.S)
+    v = re.search(r"^version:\s*(.+)$", m.group(1), re.M) if m else None
+    return v.group(1).strip() if v else None
+
+
 def style_digest(style_dir):
     """sha256 of the delivered file. Samples record it; --check enforces it."""
     return hashlib.sha256((Path(style_dir) / "style.md").read_bytes()).hexdigest()
@@ -397,7 +411,8 @@ def render_md(report):
         f"Delivered as output style `{report['name']}`.",
         "",
         f"**{report['result']}.** Last changed {report['checked'][:10]}, "
-        f"against `style.md` {report['style_sha256'][:12]}. "
+        f"against `style.md` {report['style_sha256'][:12]}"
+        f"{', version ' + report['style_version'] if report.get('style_version') else ''}. "
         f"n={'/'.join(str(x) for x in p['reps'])} per cell, "
         f"model {', '.join(p['model_ids'] or p['model'])}"
         f"{'' if p['model_ids'] else ' (alias only; predates model_ids)'}, "
@@ -441,7 +456,15 @@ def check_style(style_dir):
     probes = list(dict.fromkeys(claims["probes"] + claims["guards"]))
 
     baseline = claims["baseline"]
+    # A version string exists so an installed copy can be traced back here. One
+    # that has drifted from the directory it ships in traces back to the wrong
+    # thing, so it is checked rather than trusted. Absent is allowed: styles
+    # predating the field are not retroactively broken.
+    version = style_version(style_dir)
     targets, guards, failures = _rows(root, claims, sid)
+    if version is not None and not sid.endswith(f"-{version}"):
+        failures.insert(0, f"style.md version '{version}' does not match the "
+                            f"condition id '{sid}'")
     failures = stale_samples(root, style_dir, sid, probes) + failures
     # A baseline that is itself a style has a style.md of its own; if that file
     # has moved, the comparison is against text nobody is shipping either.
@@ -457,6 +480,7 @@ def check_style(style_dir):
         "name": name,
         "dir": str(style_dir).rstrip("/"),
         "style_sha256": style_digest(style_dir),
+        "style_version": version,
         "checked": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "result": "FAIL" if failures else "PASS",
         "claims": claims,

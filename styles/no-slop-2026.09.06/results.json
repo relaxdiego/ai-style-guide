@@ -4,7 +4,8 @@
   "name": "no-slop",
   "dir": "styles/no-slop-2026.09.06",
   "style_sha256": "9754cb957b0428b54e54eb6f0d08832dc06d2433a9cfce9b818fd49cdbcd568d",
-  "checked": "2026-09-07T06:23:07Z",
+  "style_version": null,
+  "checked": "2026-09-07T06:23:31Z",
   "result": "PASS",
   "claims": {
     "id": "no-slop-2026.09.06",

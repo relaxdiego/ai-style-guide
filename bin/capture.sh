@@ -60,6 +60,10 @@ if [ -n "$STYLE_DIR" ]; then
   # has been edited since they were captured.
   STYLE_SHA="$(sha256sum "$SRC" 2>/dev/null || shasum -a 256 "$SRC")"
   STYLE_SHA="${STYLE_SHA%% *}"
+  # Recorded so a sample directory says which released version it came from,
+  # not only which bytes. Claude Code ignores the key; see style_version() in
+  # bin/score.py for the canary that established that.
+  STYLE_VERSION="$(awk '/^---$/{f++; next} f==1 && /^version:/{sub(/^version: */, ""); print; exit}' "$SRC")"
   printf '{"outputStyle":"%s"}\n' "$STYLE" > "$RUN_DIR/.claude/settings.json"
 else
   echo '{}' > "$RUN_DIR/.claude/settings.json"
@@ -70,6 +74,14 @@ echo "$PROBE_ID / $CONDITION  ($REPS reps, model=$MODEL${STYLE_DIR:+, style=$STY
 # MODEL is an alias ("opus"), which resolves to a different snapshot over time.
 # Each rep is captured as JSON so the id the request actually ran on is read off
 # modelUsage and recorded; the sample file is still the plain text of .result.
+#
+# modelUsage lists every model the CLI touched, not the one that answered. It
+# always includes a fixed haiku call: 899-902 input and 11 output tokens whether
+# the prompt is "What is 2+2?" or the full tcp-congestion probe, against opus
+# emitting 2651 output tokens for an 829-word answer. Recording those keys
+# verbatim would put haiku in the provenance of an opus experiment, so each rep
+# records the model that produced the most output instead. One responder per
+# rep; the sort -u below still catches an alias that moved mid-run.
 export IDS="$(mktemp -d)"
 trap 'rm -rf "$RUN_DIR" "$IDS"' EXIT
 
@@ -101,6 +113,7 @@ cat > "$OUT/meta.json" <<META
   "style": $( [ -n "$STYLE_DIR" ] && printf '"%s"' "${STYLE_DIR%/}" || printf 'null' ),
   "delivery": $( [ -n "$STYLE_DIR" ] && printf '"output-style"' || printf 'null' ),
   "style_sha256": $( [ -n "$STYLE_SHA" ] && printf '"%s"' "$STYLE_SHA" || printf 'null' ),
+  "style_version": $( [ -n "${STYLE_VERSION:-}" ] && printf '"%s"' "$STYLE_VERSION" || printf 'null' ),
   "model": "$MODEL",
   "model_ids": $MODEL_IDS,
   "cli_version": "$(claude --version 2>/dev/null | awk '{print $1}')",
