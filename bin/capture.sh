@@ -16,7 +16,7 @@
 set -euo pipefail
 
 PROBE="${1:?usage: capture.sh <probe.md> <condition> [reps] [style-dir]}"
-CONDITION="${2:?missing condition (e.g. control, no-slop)}"
+CONDITION="${2:?missing condition (e.g. control, no-slop-2026.09.06)}"
 REPS="${3:-10}"
 STYLE_DIR="${4:-}"
 STYLE_SHA=""

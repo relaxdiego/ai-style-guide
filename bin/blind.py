@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build a blinded A/B pack from captured samples, and score a human's picks.
 
-    bin/blind.py build styles/no-slop [--per-probe 3] [--seed N]
-    bin/blind.py record styles/no-slop --picks picks.json
+    bin/blind.py build styles/no-slop-2026.09.06-2026.09.06 [--per-probe 3] [--seed N]
+    bin/blind.py record styles/no-slop-2026.09.06-2026.09.06 --picks picks.json
 
 The structural metrics in bin/score.py say a style got shorter and dropped its
 banned terms. They cannot say the result reads better. This adds the human gate:

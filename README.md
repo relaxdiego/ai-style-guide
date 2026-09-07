@@ -6,7 +6,7 @@ An experiment harness that measures whether a written style rule, delivered to C
 
 Ask Claude Code to run the blind read for you:
 
-> Build a blind read for `styles/no-slop` and publish it, then score my picks.
+> Build a blind read for `styles/no-slop-2026.09.06` and publish it, then score my picks.
 
 It will run `bin/blind.py build`, publish the generated `page.html` as an Artifact, and hand you a link. Read the pairs, pick A, B or no preference on each, and hit **Reveal the key** once all of them are judged. Copy the picks JSON off the reveal screen and paste it back into the session; Claude Code runs `bin/blind.py record` and writes the result to `styles/<name>/blind-read.md`.
 
@@ -70,7 +70,7 @@ All metrics are deterministic and structural, computed per sample file by `bin/s
 3. **No headroom.** If an owned metric's control is already 0 on every probe, that is reported as "no headroom" and FAILS. The style cannot be credited for moving something that was never there.
 4. **Guards.** Tolerance is ±15%. Where a probe declares coverage markers, `coverage_pct` is guarded and word count is reported only; the rationale in the code is that word count is the wrong guard for an explanation, since compressing without dropping anything is a pass. Only a drop in coverage counts against a style, and more coverage is fine. Where a probe declares no coverage markers, `words` is guarded.
 
-`--check` writes its verdict back into the style directory as `results.md` and `results.json`, so a style ships with the record that justifies it. Both are rewritten only when the numbers change, so the date they carry is when the result last moved rather than when the check last ran. The current one is [`styles/no-slop/results.md`](styles/no-slop/results.md).
+`--check` writes its verdict back into the style directory as `results.md` and `results.json`, so a style ships with the record that justifies it. Both are rewritten only when the numbers change, so the date they carry is when the result last moved rather than when the check last ran. The current one is [`styles/no-slop-2026.09.06/results.md`](styles/no-slop-2026.09.06/results.md).
 
 ## The human gate
 
@@ -88,7 +88,7 @@ Three things keep the read honest. Reps are drawn independently per condition, b
 
 The page keeps the key base64-encoded and unlocks it only once every pair has a verdict. That is obfuscation, not secrecy — the reader is blinding themselves, not defending against themselves — and `key.json` in the repo is the copy `record` scores against. Picks persist in the artifact's store as they are made, so the read can be put down and picked up.
 
-`bin/blind.py record` joins the picks back to the key and writes `blind-read.md` and `blind-read.json` beside `results.md`. The record carries a two-sided sign test over the decided pairs, marks which probes were targets and which were guards, and states what the tally cannot show — those lines are written from the numbers, so the file cannot go on claiming a caveat the data stopped supporting. The current one is [`styles/no-slop/blind-read.md`](styles/no-slop/blind-read.md).
+`bin/blind.py record` joins the picks back to the key and writes `blind-read.md` and `blind-read.json` beside `results.md`. The record carries a two-sided sign test over the decided pairs, marks which probes were targets and which were guards, and states what the tally cannot show — those lines are written from the numbers, so the file cannot go on claiming a caveat the data stopped supporting. The current one is [`styles/no-slop-2026.09.06/blind-read.md`](styles/no-slop-2026.09.06/blind-read.md).
 
 Nothing here feeds `--check`. A blind read is evidence filed next to the machine verdict, not a second gate that can fail a style.
 
@@ -99,19 +99,19 @@ Nothing here feeds `--check`. A blind read is evidence filed next to the machine
 bin/capture.sh prompts/storage-choice.md control
 
 # capture 10 reps under a style; the condition name becomes the sample directory
-bin/capture.sh prompts/storage-choice.md no-slop 10 styles/no-slop
+bin/capture.sh prompts/storage-choice.md no-slop-2026.09.06 10 styles/no-slop-2026.09.06
 
 # score one or more directories; deltas are shown against the first
-bin/score.py samples/storage-choice/control samples/storage-choice/no-slop
+bin/score.py samples/storage-choice/control samples/storage-choice/no-slop-2026.09.06
 
 # check the style against its claims, and rewrite its results.md
-bin/score.py --check styles/no-slop
+bin/score.py --check styles/no-slop-2026.09.06
 
-# build a blinded A/B pack, publish styles/no-slop/blind/page.html, read it
-bin/blind.py build styles/no-slop --per-probe 3
+# build a blinded A/B pack, publish styles/no-slop-2026.09.06/blind/page.html, read it
+bin/blind.py build styles/no-slop-2026.09.06 --per-probe 3
 
 # score the picks the page hands back
-bin/blind.py record styles/no-slop --picks picks.json
+bin/blind.py record styles/no-slop-2026.09.06 --picks picks.json
 ```
 
 Probe files live in `prompts/`. `bin/capture.sh <probe.md> <condition> [reps] [style-dir]` defaults to 10 reps. Name the condition after the style's `id` so `--check` can find it. `MODEL` defaults to `opus` and `CONCURRENCY` to `3`.
@@ -130,7 +130,7 @@ styles/<style>/
   blind/key.json                the pack's answer key and seed
   blind/pack.json, page.html    generated, gitignored
 samples/<probe>/control/        r01.md … r10.md, meta.json, scores.json
-samples/<probe>/<style>/        the same, captured under that style
+samples/<probe>/<style-version>/        the same, captured under that style
 bin/capture.sh                  clean-room capture
 bin/score.py                    metrics, scores.json, --check
 bin/blind.py                    blinded A/B pack, and scoring a human's picks

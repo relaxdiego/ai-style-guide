@@ -2,7 +2,7 @@
 """Score captured samples for wall-of-text structure.
 
     bin/score.py samples/storage-choice/control [more/dirs ...]
-    bin/score.py --check styles/no-slop
+    bin/score.py --check styles/no-slop-2026.09.06
 
 Writes scores.json into each directory and prints a table. Given more than one
 directory, prints deltas against the first (the baseline).
@@ -366,7 +366,9 @@ def render_md(report):
     cond = report["style"]
     when = " to ".join(p["captured"]) if len(p["captured"]) > 1 else p["captured"][0]
     L = [
-        f"# {report['name']} — measured result",
+        f"# {cond} — measured result",
+        "",
+        f"Delivered as output style `{report['name']}`.",
         "",
         f"**{report['result']}.** Last changed {report['checked'][:10]}, "
         f"against `style.md` {report['style_sha256'][:12]}. "

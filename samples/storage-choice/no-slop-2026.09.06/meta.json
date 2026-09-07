@@ -1,7 +1,7 @@
 {
   "probe": "storage-choice",
-  "condition": "no-slop",
-  "style": "styles/no-slop",
+  "condition": "no-slop-2026.09.06",
+  "style": "styles/no-slop-2026.09.06",
   "delivery": "output-style",
   "style_sha256": "9754cb957b0428b54e54eb6f0d08832dc06d2433a9cfce9b818fd49cdbcd568d",
   "model": "opus",

@@ -1,6 +1,6 @@
 {
   "probe": "storage-choice",
-  "condition": "no-slop",
+  "condition": "no-slop-2026.09.06",
   "verdict_tokens": [
     "SQLite",
     "Postgres"

@@ -1,5 +1,5 @@
 {
-  "style": "no-slop",
+  "style": "no-slop-2026.09.06",
   "style_sha256": "9754cb957b0428b54e54eb6f0d08832dc06d2433a9cfce9b818fd49cdbcd568d",
   "seed": 20260907,
   "pack_sha256": "61748d57eea751b9f152c3e0acc6ee061613d805921fa3cb5d2d9ea175d2ec1c",
@@ -7,87 +7,87 @@
   "key": {
     "p01": {
       "probe": "tcp-congestion",
-      "left": "no-slop",
+      "left": "no-slop-2026.09.06",
       "right": "control",
-      "left_file": "samples/tcp-congestion/no-slop/r06.md",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.06/r06.md",
       "right_file": "samples/tcp-congestion/control/r06.md"
     },
     "p02": {
       "probe": "ci-permission-denied",
       "left": "control",
-      "right": "no-slop",
+      "right": "no-slop-2026.09.06",
       "left_file": "samples/ci-permission-denied/control/r05.md",
-      "right_file": "samples/ci-permission-denied/no-slop/r04.md"
+      "right_file": "samples/ci-permission-denied/no-slop-2026.09.06/r04.md"
     },
     "p03": {
       "probe": "ci-permission-denied",
-      "left": "no-slop",
+      "left": "no-slop-2026.09.06",
       "right": "control",
-      "left_file": "samples/ci-permission-denied/no-slop/r06.md",
+      "left_file": "samples/ci-permission-denied/no-slop-2026.09.06/r06.md",
       "right_file": "samples/ci-permission-denied/control/r02.md"
     },
     "p04": {
       "probe": "tcp-congestion",
-      "left": "no-slop",
+      "left": "no-slop-2026.09.06",
       "right": "control",
-      "left_file": "samples/tcp-congestion/no-slop/r04.md",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.06/r04.md",
       "right_file": "samples/tcp-congestion/control/r05.md"
     },
     "p05": {
       "probe": "cleanup-codebase",
-      "left": "no-slop",
+      "left": "no-slop-2026.09.06",
       "right": "control",
-      "left_file": "samples/cleanup-codebase/no-slop/r01.md",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.06/r01.md",
       "right_file": "samples/cleanup-codebase/control/r01.md"
     },
     "p06": {
       "probe": "storage-choice",
       "left": "control",
-      "right": "no-slop",
+      "right": "no-slop-2026.09.06",
       "left_file": "samples/storage-choice/control/r07.md",
-      "right_file": "samples/storage-choice/no-slop/r08.md"
+      "right_file": "samples/storage-choice/no-slop-2026.09.06/r08.md"
     },
     "p07": {
       "probe": "ci-permission-denied",
       "left": "control",
-      "right": "no-slop",
+      "right": "no-slop-2026.09.06",
       "left_file": "samples/ci-permission-denied/control/r09.md",
-      "right_file": "samples/ci-permission-denied/no-slop/r03.md"
+      "right_file": "samples/ci-permission-denied/no-slop-2026.09.06/r03.md"
     },
     "p08": {
       "probe": "storage-choice",
-      "left": "no-slop",
+      "left": "no-slop-2026.09.06",
       "right": "control",
-      "left_file": "samples/storage-choice/no-slop/r04.md",
+      "left_file": "samples/storage-choice/no-slop-2026.09.06/r04.md",
       "right_file": "samples/storage-choice/control/r04.md"
     },
     "p09": {
       "probe": "cleanup-codebase",
-      "left": "no-slop",
+      "left": "no-slop-2026.09.06",
       "right": "control",
-      "left_file": "samples/cleanup-codebase/no-slop/r03.md",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.06/r03.md",
       "right_file": "samples/cleanup-codebase/control/r10.md"
     },
     "p10": {
       "probe": "cleanup-codebase",
       "left": "control",
-      "right": "no-slop",
+      "right": "no-slop-2026.09.06",
       "left_file": "samples/cleanup-codebase/control/r02.md",
-      "right_file": "samples/cleanup-codebase/no-slop/r10.md"
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.06/r10.md"
     },
     "p11": {
       "probe": "tcp-congestion",
       "left": "control",
-      "right": "no-slop",
+      "right": "no-slop-2026.09.06",
       "left_file": "samples/tcp-congestion/control/r09.md",
-      "right_file": "samples/tcp-congestion/no-slop/r01.md"
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.06/r01.md"
     },
     "p12": {
       "probe": "storage-choice",
       "left": "control",
-      "right": "no-slop",
+      "right": "no-slop-2026.09.06",
       "left_file": "samples/storage-choice/control/r10.md",
-      "right_file": "samples/storage-choice/no-slop/r10.md"
+      "right_file": "samples/storage-choice/no-slop-2026.09.06/r10.md"
     }
   }
 }
