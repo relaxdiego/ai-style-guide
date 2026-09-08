@@ -115,9 +115,16 @@ BOOLEAN = ["trailing_question", "restates_verdict"]
 
 # Metrics a rule is expected to drive down. first_verdict_pct is deliberately
 # absent: landing the answer earlier is good, but so is a probe with no verdict.
+# bullets is the one entry here whose direction is not obvious. More structure
+# is not worse in general, and no-slop-2026.09.06 raised it on tcp-congestion
+# without being penalised, because it did not claim it. It sits here because
+# every arm measured so far puts control at 2.1 to 3.8 bullets per response and
+# no-slop-2026.09.07 at 3.3 to 8.3, so on these probes "fewer" and "closer to
+# an unstyled response" are the same direction. A style that wants to claim
+# more structure cannot use this metric as written.
 LOWER_IS_BETTER = {"words", "elaboration_ratio", "prose_paragraphs", "sections",
                    "trailing_question", "restates_verdict", "banned_terms",
-                   "em_dashes_per_100w"}
+                   "em_dashes_per_100w", "bullets"}
 
 # A guard probe may drift this much before it counts as collateral damage.
 GUARD_TOLERANCE = 0.15
