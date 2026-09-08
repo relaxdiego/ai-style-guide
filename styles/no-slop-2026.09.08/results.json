@@ -1,0 +1,209 @@
+{
+  "style": "no-slop-2026.09.08",
+  "baseline": "no-slop-2026.09.07",
+  "name": "no-slop",
+  "dir": "styles/no-slop-2026.09.08",
+  "style_sha256": "b8cfe4e83174d2319f536c07d00a60b8ce9301bd53d554ff7590db3f72570ddc",
+  "style_version": "2026.09.08",
+  "checked": "2026-09-08T11:28:37Z",
+  "result": "PASS",
+  "claims": {
+    "id": "no-slop-2026.09.08",
+    "baseline": "no-slop-2026.09.07",
+    "owns": [
+      "coverage_pct"
+    ],
+    "probes": [
+      "own-output-critique"
+    ],
+    "guards": [
+      "tcp-congestion",
+      "cleanup-codebase",
+      "own-output-critique"
+    ],
+    "banned": [
+      "load-bearing",
+      "worth noting",
+      "worth naming",
+      "worth knowing",
+      "honestly",
+      "frankly",
+      "genuine",
+      "genuinely",
+      "seam",
+      "seams",
+      "absorb the divergence",
+      "wearing",
+      "dressed as",
+      "texture",
+      "grain",
+      "joints",
+      "gradient",
+      "topography",
+      "contour",
+      "residue",
+      "fossil",
+      "archaeology",
+      "axis",
+      "axes"
+    ],
+    "ceilings": {
+      "em_dashes_per_100w": 0.3,
+      "banned_terms": 0.5
+    }
+  },
+  "provenance": {
+    "model": [
+      "opus"
+    ],
+    "model_ids": [
+      "claude-opus-5"
+    ],
+    "cli_version": [
+      "2.1.263"
+    ],
+    "reps": [
+      10
+    ],
+    "captured": [
+      "2026-09-07T04:08:09Z",
+      "2026-09-08T11:28:25Z"
+    ]
+  },
+  "targets": [
+    {
+      "probe": "own-output-critique",
+      "metric": "coverage_pct",
+      "baseline": 76.7,
+      "style": 83.3,
+      "delta_pct": 8.6,
+      "status": "ok"
+    }
+  ],
+  "guards": [
+    {
+      "probe": "tcp-congestion",
+      "metric": "coverage_pct",
+      "baseline": 95.0,
+      "style": 93.0,
+      "delta_pct": -2.1,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "words",
+      "baseline": 685.6,
+      "style": 677.9,
+      "delta_pct": -1.1,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "sections",
+      "baseline": 1.7,
+      "style": 5.6,
+      "delta_pct": 229.4,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "coverage_pct",
+      "baseline": 96.7,
+      "style": 93.3,
+      "delta_pct": -3.5,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "words",
+      "baseline": 166.8,
+      "style": 89.5,
+      "delta_pct": -46.3,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "coverage_pct",
+      "baseline": 76.7,
+      "style": 83.3,
+      "delta_pct": 8.6,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "words",
+      "baseline": 470,
+      "style": 402.1,
+      "delta_pct": -14.4,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.0,
+      "style": 0.0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.3,
+      "status": "ok (<= 0.3)"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.0,
+      "style": 0.0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.3,
+      "status": "ok (<= 0.3)"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.0,
+      "style": 0.0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.3,
+      "status": "ok (<= 0.3)"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "banned_terms",
+      "baseline": 0.4,
+      "style": 0.2,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.5,
+      "status": "ok (<= 0.5)"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "banned_terms",
+      "baseline": 0,
+      "style": 0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.5,
+      "status": "ok (<= 0.5)"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "banned_terms",
+      "baseline": 0,
+      "style": 0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.5,
+      "status": "ok (<= 0.5)"
+    }
+  ],
+  "failures": []
+}

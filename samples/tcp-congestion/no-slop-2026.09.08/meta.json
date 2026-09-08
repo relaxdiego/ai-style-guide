@@ -1,0 +1,16 @@
+{
+  "probe": "tcp-congestion",
+  "condition": "no-slop-2026.09.08",
+  "style": "styles/no-slop-2026.09.08",
+  "delivery": "output-style",
+  "style_sha256": "b8cfe4e83174d2319f536c07d00a60b8ce9301bd53d554ff7590db3f72570ddc",
+  "style_version": "2026.09.08",
+  "model": "opus",
+  "model_ids": ["claude-opus-5"],
+  "cli_version": "2.1.263",
+  "captured": "2026-09-08T11:25:44Z",
+  "reps": 10,
+  "tools": "none",
+  "flags": "--tools '' --strict-mcp-config --setting-sources project --no-session-persistence",
+  "cwd": "empty non-git tmpdir with synthesized .claude/"
+}

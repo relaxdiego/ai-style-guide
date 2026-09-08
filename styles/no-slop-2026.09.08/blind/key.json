@@ -1,0 +1,73 @@
+{
+  "style": "no-slop-2026.09.08",
+  "baseline": "no-slop-2026.09.07",
+  "style_sha256": "b8cfe4e83174d2319f536c07d00a60b8ce9301bd53d554ff7590db3f72570ddc",
+  "seed": 20260908,
+  "pack_sha256": "a97f4eb2139673f1a49b7f694eecd7abceebe4a0cf02581d2cadaba51e2b3bd0",
+  "built": "2026-09-08T11:39:11Z",
+  "key": {
+    "p01": {
+      "probe": "tcp-congestion",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.08/r02.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.07/r01.md"
+    },
+    "p02": {
+      "probe": "own-output-critique",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.08/r04.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.07/r10.md"
+    },
+    "p03": {
+      "probe": "cleanup-codebase",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.07/r04.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.08/r04.md"
+    },
+    "p04": {
+      "probe": "tcp-congestion",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.07/r05.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.08/r08.md"
+    },
+    "p05": {
+      "probe": "own-output-critique",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.08/r03.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.07/r04.md"
+    },
+    "p06": {
+      "probe": "tcp-congestion",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.08/r03.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.07/r06.md"
+    },
+    "p07": {
+      "probe": "own-output-critique",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.07/r06.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.08/r08.md"
+    },
+    "p08": {
+      "probe": "cleanup-codebase",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.07",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.08/r09.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.07/r07.md"
+    },
+    "p09": {
+      "probe": "cleanup-codebase",
+      "left": "no-slop-2026.09.07",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.07/r09.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.08/r07.md"
+    }
+  }
+}

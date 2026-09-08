@@ -1,0 +1,96 @@
+# What this style claims, and what bin/score.py --check holds it to.
+#
+#   id        the condition directory name under samples/<probe>/
+#   baseline  the arm to compare against; defaults to control
+#   owns      metrics that must improve on every probe in `probes`
+#   guards    probes that must not move (coverage where declared, else words)
+#   ceilings  absolute caps a metric may not exceed on any declared probe
+#   banned    terms counted for the banned_terms metric, word-bounded
+
+id: no-slop-2026.09.08
+
+baseline: no-slop-2026.09.07
+
+# FOUR CHANGES, not one. Attribution here is partial and the record should say
+# so rather than imply a clean single-variable test:
+#   1. The em dash ban became a substitution table plus a one-per-response
+#      allowance.
+#   2. A one-to-three sentence target for simple questions was added.
+#   3. A correctness carve-out was added: error text, failing test output,
+#      security warnings and destructive-action confirmations keep full content.
+#   4. A precedence clause was added: these rules win over other formatting
+#      guidance in the system prompt.
+#
+# A fifth change was tried and rejected. Rewording the bullet rule to "when the
+# structure is real, never as decoration" was adapted from Claude Code's
+# built-in Concise style, which beat no-slop-2026.09.07 on bullets 4 probes to
+# 0. Bundled with the four above it produced no-slop-2026.09.08-bundle5, which
+# lost 30% of own-output-critique's coverage against a 15% guard tolerance, and
+# lost a one-pair blind read to the version it was replacing.
+#
+# Ten diagnostic arms on own-output-critique established that the loss was an
+# interaction rather than any one rule. Five single-change arms (-s1 through
+# -s5) each landed within 7% of 76.7, summing to +2%, against the bundle's
+# -31%. Five leave-one-out arms then recovered between +16% and +56% from 53.3,
+# so no single removal reproduces the failure either:
+#
+#   arm                     coverage   words   bullets
+#   control                     91.7   679.0       2.1
+#   no-slop-2026.09.07          76.7   470.0       8.3
+#   minus-bullets (this)        83.3   425.6       8.0
+#   minus-brevity               75.0   454.5       6.0
+#   minus-precedence            73.3   359.4       5.0
+#   minus-emdash                70.0   385.6       6.1
+#   minus-correctness           61.7   325.1       4.6
+#   bundle5, all five           53.3   337.2       2.8
+#
+# Dropping the bullet rewording recovered the most and is the only arm above
+# baseline, so it is the one left out. The rule is not condemned: alone against
+# 09.07 it scored 78.3 coverage with bullets 8.3 -> 6.0. It is a necessary
+# participant in the interaction, not sufficient for it, and it belongs in a
+# later version tested on its own.
+owns:   [coverage_pct]
+probes: [own-output-critique]
+
+# own-output-critique is a target and a guard at once, the same shape
+# no-slop-2026.09.07 used: the owned metric has to improve there while the other
+# two probes only have to hold. storage-choice declares no coverage markers, so
+# it is neither.
+#
+# `words` is deliberately not owned. It fell 470.0 -> 425.6 on the diagnostic
+# arm, but that is a 9% margin on a metric this style family has bounced around
+# by more than that between versions, and claiming it would be claiming noise.
+# The guards report it.
+guards: [tcp-congestion, cleanup-codebase, own-output-critique]
+
+# All diagnostic numbers above come from the own-output-critique arm captured
+# under styles/no-slop-2026.09.08-minus-bullets/style.md. That file differs from
+# this one only in its version: line, so the samples do not carry over and
+# --check will not accept them. Every number in results.md is a fresh capture.
+
+# em_dashes_per_100w is a ceiling, not an owned metric: no-slop-2026.09.07
+# banned the em dash outright and reached 0.00 everywhere, so relaxing the rule
+# can only move it up. 0.30 is control's worst, on cleanup-codebase.
+#
+# Two arms have leaked their own punctuation into their samples.
+# no-slop-2026.09.06 carried two em dashes and hit 1.70 on cleanup-codebase;
+# builtin-concise carries six and hit 1.10 on the same probe. Both are far above
+# control's 0.30. This version carries one, inside a code span. bundle5, which
+# carries the same one, held 0.00 on all four probes.
+#
+# banned_terms 0.50 sits just above no-slop-2026.09.07's 0.40. The list is
+# carried over byte for byte, so movement is noise, not a new rule.
+ceilings:
+  em_dashes_per_100w: 0.30
+  banned_terms: 0.50
+
+# Identical to no-slop-2026.09.07's list, unchanged so banned_terms stays
+# comparable. The known defect is carried over with it: "genuine" and
+# "genuinely" are counted wherever they sit, while the style bans them only as
+# labels or openers, so ordinary English use scores as a violation. That is what
+# failed no-slop-2026.09.07 on storage-choice.
+banned: ["load-bearing", "worth noting", "worth naming", "worth knowing",
+  "honestly", "frankly", "genuine", "genuinely", "seam", "seams",
+  "absorb the divergence", "wearing", "dressed as",
+  "texture", "grain", "joints", "gradient", "topography", "contour",
+  "residue", "fossil", "archaeology", "axis", "axes"]
