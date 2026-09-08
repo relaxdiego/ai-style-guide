@@ -1,0 +1,16 @@
+{
+  "probe": "own-output-critique",
+  "condition": "no-slop-2026.09.08-s5-precedence",
+  "style": "styles/no-slop-2026.09.08-s5-precedence",
+  "delivery": "output-style",
+  "style_sha256": "521b16fb7bb0bbf8069299b6dfd09b4e063658d5dee37700f3590497efc09822",
+  "style_version": "2026.09.08-s5-precedence",
+  "model": "opus",
+  "model_ids": ["claude-opus-5"],
+  "cli_version": "2.1.263",
+  "captured": "2026-09-08T09:48:00Z",
+  "reps": 10,
+  "tools": "Read,Glob,Grep",
+  "flags": "--tools 'Read,Glob,Grep' --strict-mcp-config --setting-sources project --no-session-persistence --permission-mode bypassPermissions",
+  "cwd": "empty non-git tmpdir with synthesized .claude/"
+}
