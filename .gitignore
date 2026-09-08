@@ -12,3 +12,10 @@ styles/*/blind/page.html
 
 # Byte-compiled cache, created if bin/*.py is imported rather than run.
 __pycache__/
+
+# Claude Code's built-in output styles, extracted from the CLI binary so they
+# can be run as arms of the same experiment. Anthropic's text, not ours, so it
+# stays local and out of the published repo. Recreate with the extraction
+# recipe in each directory's provenance.md.
+styles/builtin-*/
+samples/*/builtin-*/
