@@ -217,6 +217,22 @@ def load_claims(style_dir):
     claims["baseline"] = b.group(1).strip() if b else "control"
     for key in ("owns", "probes", "guards", "banned"):
         claims[key] = _list_key(text, key)
+    # An absolute ceiling, not a relative guard. A relative guard cannot hold a
+    # metric whose baseline is already 0.00: every delta against zero is
+    # undefined. A style that *relaxes* a rule the previous version drove to
+    # zero needs to say how far back up the metric is allowed to come, and that
+    # is a number, not a percentage.
+    # Absent rather than empty when unset, so adding this key does not perturb
+    # the stored claims of every style that predates it and reset its `checked`.
+    m = re.search(r"^ceilings:\s*$((?:\n[ \t]+\S.*)*)", text, re.M)
+    ceilings = {}
+    if m:
+        for line in m.group(1).splitlines():
+            kv = re.match(r"^[ \t]+([A-Za-z_][\w]*):\s*([0-9.]+)\s*$", line)
+            if kv:
+                ceilings[kv.group(1)] = float(kv.group(2))
+    if ceilings:
+        claims["ceilings"] = ceilings
     return claims
 
 
@@ -391,6 +407,33 @@ def _rows(root, claims, sid):
                     f"{probe}: guard metric '{k}' moved {100 * delta:+.0f}% "
                     f"(tolerance {int(GUARD_TOLERANCE * 100)}%)")
 
+    # Ceilings run over every declared probe, target and guard alike: a metric
+    # the style is allowed to give up ground on has to be held everywhere, not
+    # only where the style claims an improvement.
+    for k, limit in claims.get("ceilings", {}).items():
+        for probe in dict.fromkeys(claims["probes"] + claims["guards"]):
+            style_d = root / "samples" / probe / sid
+            base_d = root / "samples" / probe / baseline
+            if not style_d.exists():
+                continue
+            if k == "banned_terms":
+                r = banned_mean(style_d, claims["banned"])
+                b = banned_mean(base_d, claims["banned"]) if base_d.exists() else None
+            else:
+                r = metric_mean(score_dir(style_d), k)
+                b = metric_mean(score_dir(base_d), k) if base_d.exists() else None
+            if r is None:
+                continue
+            over = r > limit
+            guards.append({
+                "probe": probe, "metric": k, "baseline": b, "style": r,
+                "delta_pct": None, "guarded": True, "ceiling": limit,
+                "status": f"OVER CEILING {limit:g}" if over else f"ok (<= {limit:g})",
+            })
+            if over:
+                failures.append(
+                    f"{probe}: '{k}' is {r:.2f}, over the declared ceiling of {limit:g}")
+
     for k, ok in measured.items():
         if not ok:
             failures.append(
@@ -435,6 +478,11 @@ def render_md(report):
         f"- **probes** {', '.join(c['probes']) or '(none)'}",
         f"- **guards** {', '.join(c['guards']) or '(none)'}",
         f"- **baseline** {base}",
+    ]
+    if c.get("ceilings"):
+        L.append("- **ceilings** " + ", ".join(
+            f"`{k}` <= {v:g}" for k, v in c["ceilings"].items()))
+    L += [
         "",
         "## Targets",
         "",
