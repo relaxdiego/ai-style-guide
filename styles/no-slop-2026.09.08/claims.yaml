@@ -29,10 +29,10 @@ baseline: no-slop-2026.09.07
 # lost a one-pair blind read to the version it was replacing.
 #
 # Ten diagnostic arms on own-output-critique established that the loss was an
-# interaction rather than any one rule. Five single-change arms (-s1 through
-# -s5) each landed within 7% of 76.7, summing to +2%, against the bundle's
-# -31%. Five leave-one-out arms then recovered between +16% and +56% from 53.3,
-# so no single removal reproduces the failure either:
+# interaction rather than any one rule. Five single-change arms each landed
+# within 7% of 76.7, summing to +2%, against the bundle's -31%. Five
+# leave-one-out arms then recovered between +16% and +56% from 53.3, so no
+# single removal reproduces the failure either:
 #
 #   arm                     coverage   words   bullets
 #   control                     91.7   679.0       2.1
@@ -63,10 +63,11 @@ probes: [own-output-critique]
 # The guards report it.
 guards: [tcp-congestion, cleanup-codebase, own-output-critique]
 
-# All diagnostic numbers above come from the own-output-critique arm captured
-# under styles/no-slop-2026.09.08-minus-bullets/style.md. That file differs from
-# this one only in its version: line, so the samples do not carry over and
-# --check will not accept them. Every number in results.md is a fresh capture.
+# The diagnostic arms and their samples were deleted after this version
+# shipped; git history has them, under the commit that added them. Their
+# numbers are kept above because they are the reasoning behind what this
+# version leaves out, and nothing in --check reads them: every figure in
+# results.md is a fresh capture under this style.md.
 
 # em_dashes_per_100w is a ceiling, not an owned metric: no-slop-2026.09.07
 # banned the em dash outright and reached 0.00 everywhere, so relaxing the rule
