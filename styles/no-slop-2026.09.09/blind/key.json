@@ -1,0 +1,73 @@
+{
+  "style": "no-slop-2026.09.09",
+  "baseline": "no-slop-2026.09.08",
+  "style_sha256": "3d1b75c68c7ad7c6a94ed4886911bd1a3c04eefe500e3e6bb1aa27f4245b794e",
+  "seed": 20260909,
+  "pack_sha256": "99924563e5b6de84e40179b5c6d98ed2b878d2959cf74b774be484db1605bc09",
+  "built": "2026-09-09T11:13:00Z",
+  "key": {
+    "p01": {
+      "probe": "own-output-critique",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.09/r08.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.08/r03.md"
+    },
+    "p02": {
+      "probe": "cleanup-codebase",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.08/r04.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.09/r06.md"
+    },
+    "p03": {
+      "probe": "tcp-congestion",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.08/r10.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.09/r07.md"
+    },
+    "p04": {
+      "probe": "own-output-critique",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.08/r10.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.09/r02.md"
+    },
+    "p05": {
+      "probe": "tcp-congestion",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.09/r08.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.08/r05.md"
+    },
+    "p06": {
+      "probe": "cleanup-codebase",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.09/r05.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.08/r08.md"
+    },
+    "p07": {
+      "probe": "cleanup-codebase",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.08/r03.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.09/r07.md"
+    },
+    "p08": {
+      "probe": "own-output-critique",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.09/r09.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.08/r02.md"
+    },
+    "p09": {
+      "probe": "tcp-congestion",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.09/r04.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.08/r01.md"
+    }
+  }
+}

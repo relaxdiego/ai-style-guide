@@ -1,0 +1,150 @@
+{
+  "style": "no-slop-2026.09.09",
+  "baseline": "no-slop-2026.09.08",
+  "style_sha256": "3d1b75c68c7ad7c6a94ed4886911bd1a3c04eefe500e3e6bb1aa27f4245b794e",
+  "pack_sha256": "99924563e5b6de84e40179b5c6d98ed2b878d2959cf74b774be484db1605bc09",
+  "seed": 20260909,
+  "read": "2026-09-09T11:24:05.493Z",
+  "reader": null,
+  "n": 9,
+  "unjudged": [],
+  "tally": {
+    "no-slop-2026.09.09": 4,
+    "no-slop-2026.09.08": 4,
+    "tie": 1
+  },
+  "per_probe": {
+    "own-output-critique": {
+      "no-slop-2026.09.09": 2,
+      "no-slop-2026.09.08": 0,
+      "tie": 1
+    },
+    "cleanup-codebase": {
+      "no-slop-2026.09.09": 0,
+      "no-slop-2026.09.08": 3,
+      "tie": 0
+    },
+    "tcp-congestion": {
+      "no-slop-2026.09.09": 2,
+      "no-slop-2026.09.08": 1,
+      "tie": 0
+    }
+  },
+  "preferred_pct": 50.0,
+  "sign_test_p": 1.0,
+  "roles": {
+    "own-output-critique": "target+guard",
+    "tcp-congestion": "target+guard",
+    "cleanup-codebase": "guard"
+  },
+  "pairs": [
+    {
+      "pair": "p01",
+      "probe": "own-output-critique",
+      "role": "target+guard",
+      "pick": "left",
+      "chose": "no-slop-2026.09.09",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.09/r08.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.08/r03.md",
+      "note": ""
+    },
+    {
+      "pair": "p02",
+      "probe": "cleanup-codebase",
+      "role": "guard",
+      "pick": "left",
+      "chose": "no-slop-2026.09.08",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.08/r04.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.09/r06.md",
+      "note": ""
+    },
+    {
+      "pair": "p03",
+      "probe": "tcp-congestion",
+      "role": "target+guard",
+      "pick": "right",
+      "chose": "no-slop-2026.09.09",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.08/r10.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.09/r07.md",
+      "note": ""
+    },
+    {
+      "pair": "p04",
+      "probe": "own-output-critique",
+      "role": "target+guard",
+      "pick": "right",
+      "chose": "no-slop-2026.09.09",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.08/r10.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.09/r02.md",
+      "note": ""
+    },
+    {
+      "pair": "p05",
+      "probe": "tcp-congestion",
+      "role": "target+guard",
+      "pick": "left",
+      "chose": "no-slop-2026.09.09",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.09/r08.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.08/r05.md",
+      "note": ""
+    },
+    {
+      "pair": "p06",
+      "probe": "cleanup-codebase",
+      "role": "guard",
+      "pick": "right",
+      "chose": "no-slop-2026.09.08",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.09/r05.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.08/r08.md",
+      "note": ""
+    },
+    {
+      "pair": "p07",
+      "probe": "cleanup-codebase",
+      "role": "guard",
+      "pick": "left",
+      "chose": "no-slop-2026.09.08",
+      "left": "no-slop-2026.09.08",
+      "right": "no-slop-2026.09.09",
+      "left_file": "samples/cleanup-codebase/no-slop-2026.09.08/r03.md",
+      "right_file": "samples/cleanup-codebase/no-slop-2026.09.09/r07.md",
+      "note": ""
+    },
+    {
+      "pair": "p08",
+      "probe": "own-output-critique",
+      "role": "target+guard",
+      "pick": "tie",
+      "chose": "tie",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/own-output-critique/no-slop-2026.09.09/r09.md",
+      "right_file": "samples/own-output-critique/no-slop-2026.09.08/r02.md",
+      "note": ""
+    },
+    {
+      "pair": "p09",
+      "probe": "tcp-congestion",
+      "role": "target+guard",
+      "pick": "right",
+      "chose": "no-slop-2026.09.08",
+      "left": "no-slop-2026.09.09",
+      "right": "no-slop-2026.09.08",
+      "left_file": "samples/tcp-congestion/no-slop-2026.09.09/r04.md",
+      "right_file": "samples/tcp-congestion/no-slop-2026.09.08/r01.md",
+      "note": ""
+    }
+  ]
+}
