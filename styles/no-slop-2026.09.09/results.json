@@ -1,0 +1,291 @@
+{
+  "style": "no-slop-2026.09.09",
+  "baseline": "no-slop-2026.09.08",
+  "name": "no-slop",
+  "dir": "styles/no-slop-2026.09.09",
+  "style_sha256": "3d1b75c68c7ad7c6a94ed4886911bd1a3c04eefe500e3e6bb1aa27f4245b794e",
+  "style_version": "2026.09.09",
+  "checked": "2026-09-09T10:33:54Z",
+  "result": "FAIL",
+  "claims": {
+    "id": "no-slop-2026.09.09",
+    "baseline": "no-slop-2026.09.08",
+    "owns": [
+      "bullets"
+    ],
+    "probes": [
+      "own-output-critique",
+      "tcp-congestion"
+    ],
+    "guards": [
+      "tcp-congestion",
+      "cleanup-codebase",
+      "own-output-critique"
+    ],
+    "banned": [
+      "load-bearing",
+      "worth noting",
+      "worth naming",
+      "worth knowing",
+      "honestly",
+      "frankly",
+      "genuine",
+      "genuinely",
+      "seam",
+      "seams",
+      "absorb the divergence",
+      "wearing",
+      "dressed as",
+      "texture",
+      "grain",
+      "joints",
+      "gradient",
+      "topography",
+      "contour",
+      "residue",
+      "fossil",
+      "archaeology",
+      "axis",
+      "axes"
+    ],
+    "ceilings": {
+      "em_dashes_per_100w": 0.3,
+      "banned_terms": 0.5,
+      "sections": 4.1
+    }
+  },
+  "provenance": {
+    "model": [
+      "opus"
+    ],
+    "model_ids": [
+      "claude-opus-5"
+    ],
+    "cli_version": [
+      "2.1.263",
+      "2.1.266"
+    ],
+    "reps": [
+      10
+    ],
+    "captured": [
+      "2026-09-08T11:25:44Z",
+      "2026-09-09T10:32:22Z"
+    ]
+  },
+  "targets": [
+    {
+      "probe": "own-output-critique",
+      "metric": "bullets",
+      "baseline": 8.1,
+      "style": 5.7,
+      "p": 0.0,
+      "delta_pct": -29.6,
+      "status": "ok"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "bullets",
+      "baseline": 6.8,
+      "style": 1.7,
+      "p": 0.0002,
+      "delta_pct": -75.0,
+      "status": "ok"
+    }
+  ],
+  "guards": [
+    {
+      "probe": "tcp-congestion",
+      "metric": "coverage_pct",
+      "baseline": 93.0,
+      "style": 95.0,
+      "delta": 2.0,
+      "delta_pct": 2.2,
+      "p": 0.7136,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "words",
+      "baseline": 677.9,
+      "style": 693.7,
+      "delta": 15.8,
+      "delta_pct": 2.3,
+      "p": 0.7434,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "sections",
+      "baseline": 4.1,
+      "style": 4.5,
+      "delta": 0.4,
+      "delta_pct": 9.8,
+      "p": 0.5284,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "coverage_pct",
+      "baseline": 93.3,
+      "style": 96.7,
+      "delta": 3.4,
+      "delta_pct": 3.6,
+      "p": 1.0,
+      "guarded": true,
+      "status": "ok"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "words",
+      "baseline": 89.5,
+      "style": 83.4,
+      "delta": -6.1,
+      "delta_pct": -6.8,
+      "p": 0.4796,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta": 0,
+      "delta_pct": null,
+      "p": 1.0,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "coverage_pct",
+      "baseline": 83.3,
+      "style": 65.0,
+      "delta": -18.3,
+      "delta_pct": -22.0,
+      "p": 0.011,
+      "guarded": true,
+      "status": "COLLATERAL"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "words",
+      "baseline": 402.1,
+      "style": 364.7,
+      "delta": -37.4,
+      "delta_pct": -9.3,
+      "p": 0.0742,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta": 0,
+      "delta_pct": null,
+      "p": 1.0,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.0,
+      "style": 0.0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.3,
+      "status": "ok (<= 0.3)"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.0,
+      "style": 0.0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.3,
+      "status": "ok (<= 0.3)"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "em_dashes_per_100w",
+      "baseline": 0.0,
+      "style": 0.1,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.3,
+      "status": "ok (<= 0.3)"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "banned_terms",
+      "baseline": 0.2,
+      "style": 0.2,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.5,
+      "status": "ok (<= 0.5)"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "banned_terms",
+      "baseline": 0,
+      "style": 0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.5,
+      "status": "ok (<= 0.5)"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "banned_terms",
+      "baseline": 0,
+      "style": 0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 0.5,
+      "status": "ok (<= 0.5)"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 4.1,
+      "status": "ok (<= 4.1)"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "sections",
+      "baseline": 4.1,
+      "style": 4.5,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 4.1,
+      "status": "OVER CEILING 4.1"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta_pct": null,
+      "guarded": true,
+      "ceiling": 4.1,
+      "status": "ok (<= 4.1)"
+    }
+  ],
+  "failures": [
+    "own-output-critique: guard metric 'coverage_pct' moved -22% (tolerance 15%)",
+    "tcp-congestion: 'sections' is 4.50, over the declared ceiling of 4.1"
+  ]
+}
