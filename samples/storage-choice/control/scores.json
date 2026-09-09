@@ -9,41 +9,43 @@
   "summary": {
     "words": {
       "mean": 571,
+      "sd": 71.22,
       "min": 496,
       "max": 749
     },
     "first_verdict_pct": {
       "mean": 0.1,
+      "sd": 0.1,
       "min": 0.0,
       "max": 0.2
     },
-    "elaboration_ratio": {
-      "mean": 99.9,
-      "min": 99.8,
-      "max": 100.0
-    },
     "prose_paragraphs": {
       "mean": 6.5,
+      "sd": 0.71,
       "min": 6,
       "max": 8
     },
     "bullets": {
       "mean": 3.8,
+      "sd": 0.79,
       "min": 3,
       "max": 5
     },
     "sections": {
       "mean": 0,
+      "sd": 0.0,
       "min": 0,
       "max": 0
     },
-    "code_fence_lines": {
+    "code_blocks": {
       "mean": 0.1,
+      "sd": 0.32,
       "min": 0,
       "max": 1
     },
     "em_dashes_per_100w": {
       "mean": 0.0,
+      "sd": 0.0,
       "min": 0.0,
       "max": 0.0
     },
@@ -64,13 +66,12 @@
       "file": "r01.md",
       "words": 549,
       "first_verdict_pct": 0.0,
-      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 6,
       "bullets": 4,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -78,13 +79,12 @@
       "file": "r02.md",
       "words": 520,
       "first_verdict_pct": 0.2,
-      "elaboration_ratio": 99.8,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 7,
       "bullets": 4,
       "sections": 0,
-      "code_fence_lines": 1,
+      "code_blocks": 1,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -92,13 +92,12 @@
       "file": "r03.md",
       "words": 496,
       "first_verdict_pct": 0.0,
-      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 6,
       "bullets": 5,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -106,13 +105,12 @@
       "file": "r04.md",
       "words": 537,
       "first_verdict_pct": 0.0,
-      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 7,
       "bullets": 3,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -120,13 +118,12 @@
       "file": "r05.md",
       "words": 572,
       "first_verdict_pct": 0.0,
-      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 6,
       "bullets": 3,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -134,13 +131,12 @@
       "file": "r06.md",
       "words": 622,
       "first_verdict_pct": 0.0,
-      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 7,
       "bullets": 4,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -148,13 +144,12 @@
       "file": "r07.md",
       "words": 565,
       "first_verdict_pct": 0.2,
-      "elaboration_ratio": 99.8,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 6,
       "bullets": 5,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -162,13 +157,12 @@
       "file": "r08.md",
       "words": 749,
       "first_verdict_pct": 0.0,
-      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 8,
       "bullets": 3,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -176,13 +170,12 @@
       "file": "r09.md",
       "words": 533,
       "first_verdict_pct": 0.0,
-      "elaboration_ratio": 100.0,
       "trailing_question": false,
       "restates_verdict": false,
       "prose_paragraphs": 6,
       "bullets": 4,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     },
@@ -190,13 +183,12 @@
       "file": "r10.md",
       "words": 567,
       "first_verdict_pct": 0.2,
-      "elaboration_ratio": 99.8,
       "trailing_question": false,
       "restates_verdict": true,
       "prose_paragraphs": 6,
       "bullets": 3,
       "sections": 0,
-      "code_fence_lines": 0,
+      "code_blocks": 0,
       "em_dashes_per_100w": 0.0,
       "coverage_pct": null
     }

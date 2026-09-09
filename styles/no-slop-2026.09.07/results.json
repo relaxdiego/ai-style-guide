@@ -5,7 +5,7 @@
   "dir": "styles/no-slop-2026.09.07",
   "style_sha256": "c5e840c2e4d7293c33408e2a51469041e7ac183d45762f90fdf6f1505ec4a5b9",
   "style_version": "2026.09.07",
-  "checked": "2026-09-07T04:16:43Z",
+  "checked": "2026-09-09T09:23:35Z",
   "result": "FAIL",
   "claims": {
     "id": "no-slop-2026.09.07",
@@ -74,6 +74,7 @@
       "metric": "em_dashes_per_100w",
       "baseline": 0.2,
       "style": 0.0,
+      "p": 0.0325,
       "delta_pct": -100.0,
       "status": "ok"
     },
@@ -82,6 +83,7 @@
       "metric": "banned_terms",
       "baseline": 1.5,
       "style": 0.4,
+      "p": 0.0134,
       "delta_pct": -73.3,
       "status": "ok"
     },
@@ -90,6 +92,7 @@
       "metric": "em_dashes_per_100w",
       "baseline": 0.3,
       "style": 0.0,
+      "p": 0.0325,
       "delta_pct": -100.0,
       "status": "ok"
     },
@@ -98,6 +101,7 @@
       "metric": "banned_terms",
       "baseline": 0.2,
       "style": 0.4,
+      "p": 0.6285,
       "delta_pct": 100.0,
       "status": "NO MOVEMENT"
     }
@@ -108,7 +112,9 @@
       "metric": "coverage_pct",
       "baseline": 94.0,
       "style": 95.0,
+      "delta": 1.0,
       "delta_pct": 1.1,
+      "p": 1.0,
       "guarded": true,
       "status": "ok"
     },
@@ -117,7 +123,9 @@
       "metric": "words",
       "baseline": 602.9,
       "style": 685.6,
+      "delta": 82.7,
       "delta_pct": 13.7,
+      "p": 0.0786,
       "guarded": false,
       "status": "reported"
     },
@@ -125,8 +133,10 @@
       "probe": "tcp-congestion",
       "metric": "sections",
       "baseline": 1.1,
-      "style": 1.7,
-      "delta_pct": 54.5,
+      "style": 1,
+      "delta": -0.1,
+      "delta_pct": -9.1,
+      "p": 1.0,
       "guarded": false,
       "status": "reported"
     },
@@ -135,7 +145,9 @@
       "metric": "coverage_pct",
       "baseline": 100.0,
       "style": 96.7,
+      "delta": -3.3,
       "delta_pct": -3.3,
+      "p": 1.0,
       "guarded": true,
       "status": "ok"
     },
@@ -144,7 +156,20 @@
       "metric": "words",
       "baseline": 132.3,
       "style": 166.8,
+      "delta": 34.5,
       "delta_pct": 26.1,
+      "p": 0.0171,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta": 0,
+      "delta_pct": null,
+      "p": 1.0,
       "guarded": false,
       "status": "reported"
     },
@@ -153,7 +178,9 @@
       "metric": "coverage_pct",
       "baseline": 81.7,
       "style": 76.7,
+      "delta": -5.0,
       "delta_pct": -6.1,
+      "p": 0.6297,
       "guarded": true,
       "status": "ok"
     },
@@ -162,7 +189,20 @@
       "metric": "words",
       "baseline": 420.5,
       "style": 470,
+      "delta": 49.5,
       "delta_pct": 11.8,
+      "p": 0.0683,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta": 0,
+      "delta_pct": null,
+      "p": 1.0,
       "guarded": false,
       "status": "reported"
     }

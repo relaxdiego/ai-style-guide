@@ -5,8 +5,8 @@
   "dir": "styles/no-slop-2026.09.08",
   "style_sha256": "b8cfe4e83174d2319f536c07d00a60b8ce9301bd53d554ff7590db3f72570ddc",
   "style_version": "2026.09.08",
-  "checked": "2026-09-08T11:28:37Z",
-  "result": "PASS",
+  "checked": "2026-09-09T09:23:36Z",
+  "result": "FAIL",
   "claims": {
     "id": "no-slop-2026.09.08",
     "baseline": "no-slop-2026.09.07",
@@ -76,8 +76,9 @@
       "metric": "coverage_pct",
       "baseline": 76.7,
       "style": 83.3,
+      "p": 0.4906,
       "delta_pct": 8.6,
-      "status": "ok"
+      "status": "NOT SIGNIFICANT"
     }
   ],
   "guards": [
@@ -86,7 +87,9 @@
       "metric": "coverage_pct",
       "baseline": 95.0,
       "style": 93.0,
+      "delta": -2.0,
       "delta_pct": -2.1,
+      "p": 0.7136,
       "guarded": true,
       "status": "ok"
     },
@@ -95,16 +98,20 @@
       "metric": "words",
       "baseline": 685.6,
       "style": 677.9,
+      "delta": -7.7,
       "delta_pct": -1.1,
+      "p": 0.8708,
       "guarded": false,
       "status": "reported"
     },
     {
       "probe": "tcp-congestion",
       "metric": "sections",
-      "baseline": 1.7,
-      "style": 5.6,
-      "delta_pct": 229.4,
+      "baseline": 1,
+      "style": 4.1,
+      "delta": 3.1,
+      "delta_pct": 310.0,
+      "p": 0.0003,
       "guarded": false,
       "status": "reported"
     },
@@ -113,7 +120,9 @@
       "metric": "coverage_pct",
       "baseline": 96.7,
       "style": 93.3,
+      "delta": -3.4,
       "delta_pct": -3.5,
+      "p": 1.0,
       "guarded": true,
       "status": "ok"
     },
@@ -122,7 +131,20 @@
       "metric": "words",
       "baseline": 166.8,
       "style": 89.5,
+      "delta": -77.3,
       "delta_pct": -46.3,
+      "p": 0.0,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta": 0,
+      "delta_pct": null,
+      "p": 1.0,
       "guarded": false,
       "status": "reported"
     },
@@ -131,7 +153,9 @@
       "metric": "coverage_pct",
       "baseline": 76.7,
       "style": 83.3,
+      "delta": 6.6,
       "delta_pct": 8.6,
+      "p": 0.4906,
       "guarded": true,
       "status": "ok"
     },
@@ -140,7 +164,20 @@
       "metric": "words",
       "baseline": 470,
       "style": 402.1,
+      "delta": -67.9,
       "delta_pct": -14.4,
+      "p": 0.0056,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "own-output-critique",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta": 0,
+      "delta_pct": null,
+      "p": 1.0,
       "guarded": false,
       "status": "reported"
     },
@@ -205,5 +242,7 @@
       "status": "ok (<= 0.5)"
     }
   ],
-  "failures": []
+  "failures": [
+    "own-output-critique: owned metric 'coverage_pct' moved the right way (+9%) but not past noise (permutation p=0.4906, needs p < 0.05)"
+  ]
 }

@@ -5,8 +5,8 @@
   "dir": "styles/no-slop-2026.09.06",
   "style_sha256": "9754cb957b0428b54e54eb6f0d08832dc06d2433a9cfce9b818fd49cdbcd568d",
   "style_version": null,
-  "checked": "2026-09-07T06:23:31Z",
-  "result": "PASS",
+  "checked": "2026-09-09T09:23:28Z",
+  "result": "FAIL",
   "claims": {
     "id": "no-slop-2026.09.06",
     "baseline": "control",
@@ -61,6 +61,7 @@
       "metric": "words",
       "baseline": 571,
       "style": 333.3,
+      "p": 0.0,
       "delta_pct": -41.6,
       "status": "ok"
     },
@@ -69,6 +70,7 @@
       "metric": "prose_paragraphs",
       "baseline": 6.5,
       "style": 4.4,
+      "p": 0.0003,
       "delta_pct": -32.3,
       "status": "ok"
     },
@@ -77,6 +79,7 @@
       "metric": "banned_terms",
       "baseline": 1.7,
       "style": 0.2,
+      "p": 0.0011,
       "delta_pct": -88.2,
       "status": "ok"
     },
@@ -85,22 +88,25 @@
       "metric": "words",
       "baseline": 344.2,
       "style": 230.5,
+      "p": 0.0,
       "delta_pct": -33.0,
       "status": "ok"
     },
     {
       "probe": "ci-permission-denied",
       "metric": "prose_paragraphs",
-      "baseline": 5.3,
+      "baseline": 5.2,
       "style": 4.9,
-      "delta_pct": -7.5,
-      "status": "ok"
+      "p": 0.6766,
+      "delta_pct": -5.8,
+      "status": "NOT SIGNIFICANT"
     },
     {
       "probe": "ci-permission-denied",
       "metric": "banned_terms",
       "baseline": 0,
       "style": 0,
+      "p": 1.0,
       "status": "no headroom"
     }
   ],
@@ -110,7 +116,9 @@
       "metric": "coverage_pct",
       "baseline": 92.0,
       "style": 94.0,
+      "delta": 2.0,
       "delta_pct": 2.2,
+      "p": 0.7363,
       "guarded": true,
       "status": "ok"
     },
@@ -119,7 +127,20 @@
       "metric": "words",
       "baseline": 932.7,
       "style": 602.9,
+      "delta": -329.8,
       "delta_pct": -35.4,
+      "p": 0.0001,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "tcp-congestion",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 1.1,
+      "delta": 1.1,
+      "delta_pct": null,
+      "p": 0.2105,
       "guarded": false,
       "status": "reported"
     },
@@ -128,7 +149,9 @@
       "metric": "coverage_pct",
       "baseline": 96.7,
       "style": 100.0,
+      "delta": 3.3,
       "delta_pct": 3.4,
+      "p": 1.0,
       "guarded": true,
       "status": "ok"
     },
@@ -137,10 +160,25 @@
       "metric": "words",
       "baseline": 195.4,
       "style": 132.3,
+      "delta": -63.1,
       "delta_pct": -32.3,
+      "p": 0.0003,
+      "guarded": false,
+      "status": "reported"
+    },
+    {
+      "probe": "cleanup-codebase",
+      "metric": "sections",
+      "baseline": 0,
+      "style": 0,
+      "delta": 0,
+      "delta_pct": null,
+      "p": 1.0,
       "guarded": false,
       "status": "reported"
     }
   ],
-  "failures": []
+  "failures": [
+    "ci-permission-denied: owned metric 'prose_paragraphs' moved the right way (-6%) but not past noise (permutation p=0.6766, needs p < 0.05)"
+  ]
 }
