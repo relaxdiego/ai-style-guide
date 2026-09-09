@@ -1,0 +1,78 @@
+# What this style claims, and what bin/score.py --check holds it to.
+#
+#   id         the condition directory name under samples/<probe>/
+#   baseline   the arm to compare against; defaults to control
+#   owns       metrics that must improve on every probe in `probes`
+#   guards     probes that must not move (coverage where declared, else words)
+#   ceilings   absolute caps a metric may not exceed on any declared probe
+#   directions per-metric override of score.py's default improvement direction
+#   banned     terms counted for the banned_terms metric, word-bounded
+
+id: no-slop-2026.09.09
+
+baseline: no-slop-2026.09.08
+
+# ONE CHANGE. Line 15 of style.md, and nothing else:
+#
+#   -  Lists and comparisons go in bullets or a table, never a paragraph.
+#   +  Use a bullet list, table, or heading when the structure is real, never
+#   +  as decoration. Two or three related items are a sentence, not a list.
+#
+# This rule is not new. It was one of the five in the no-slop-2026.09.08 bundle
+# that lost 30% of own-output-critique's coverage, and it was the one dropped,
+# because removing it recovered the most ground of any of the five leave-one-out
+# arms. It was never condemned: tested alone against no-slop-2026.09.07 it
+# scored coverage 78.3 against that baseline's 76.7 and cut bullets 8.3 -> 6.0.
+# It has never been run against the shipped 09.08 text, which is what this
+# version does. One rule, because the bundle5 result says five at once is not
+# attributable and not decomposable by leave-one-out either.
+
+# PRE-REGISTERED before capture, against these measured baselines:
+#
+#   probe                 metric     control   09.08 (baseline)
+#   own-output-critique   bullets        2.1     8.1
+#   tcp-congestion        bullets        2.3     6.8
+#   tcp-congestion        sections       0.0     4.1
+#
+# Bullet inflation is the largest live regression in the shipped style and
+# nothing in --check currently sees it: `bullets` is in LOWER_IS_BETTER but no
+# version has owned or guarded it. Control sits at 2.1 and 2.3; 09.08 sits at
+# 8.1 and 6.8, both p=0.0000 against control. Anthropic's built-in `concise`
+# style, which is where this rule's wording comes from, sits at control's rate
+# on all four probes. So "fewer bullets" and "closer to an unstyled response"
+# are the same direction here, which is the condition score.py's LOWER_IS_BETTER
+# comment sets for using the metric at all. No `directions:` override needed.
+#
+# The prediction, written down before the samples exist: bullets falls on both
+# probes, and coverage_pct does not drop more than the 15% guard allows. If
+# bullets falls and coverage goes with it, the rule is a compression rule in
+# disguise and the guard should catch it.
+owns:   [bullets]
+probes: [own-output-critique, tcp-congestion]
+
+# own-output-critique and tcp-congestion are targets and guards at once, the
+# shape 09.07 and 09.08 both used: the owned metric has to improve there while
+# coverage only has to hold.
+guards: [tcp-congestion, cleanup-codebase, own-output-critique]
+
+# em_dashes_per_100w and banned_terms carried from 09.08 unchanged; the rule
+# under test touches neither, so movement on them is noise and the ceilings only
+# have to catch a regression.
+#
+# sections is new. The rule names headings as well as bullets, so it should hold
+# or reduce them, and 09.08's 4.10 on tcp-congestion is the number to beat. It
+# is a ceiling rather than an owned metric because the heading count is 0.0 on
+# three of the four probes, where a relative claim has nothing to say.
+ceilings:
+  em_dashes_per_100w: 0.30
+  banned_terms: 0.50
+  sections: 4.10
+
+# Identical to 09.08's list, unchanged so banned_terms stays comparable. The
+# known defect rides along with it: "genuine" and "genuinely" are counted
+# wherever they sit, while the style bans them only as labels or openers.
+banned: ["load-bearing", "worth noting", "worth naming", "worth knowing",
+  "honestly", "frankly", "genuine", "genuinely", "seam", "seams",
+  "absorb the divergence", "wearing", "dressed as",
+  "texture", "grain", "joints", "gradient", "topography", "contour",
+  "residue", "fossil", "archaeology", "axis", "axes"]
